@@ -1,5 +1,8 @@
 package com.estafet.companies.company;
 
+import com.estafet.companies.exception.ApiException;
+import com.estafet.companies.exception.EntityNotFoundException;
+import com.estafet.companies.exception.InvalidInputException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -22,9 +25,20 @@ public class CompanyService
         return companyMap;
     }
 
-    public Company getCompany(String name)
+    public Company getCompany(String name) throws EntityNotFoundException, InvalidInputException
     {
-        return companyMap.getOrDefault(name, null);
+        if (!StringUtils.hasText(name))
+        {
+            throw new InvalidInputException("Company name is invalid!");
+        }
+
+        Company resultCompany = companyMap.getOrDefault(name, null);
+        if (resultCompany == null)
+        {
+            throw new EntityNotFoundException("Company not found!");
+        }
+
+        return resultCompany;
     }
 
     public void addCompany(Company company)
@@ -35,21 +49,33 @@ public class CompanyService
         }
     }
 
-    public void updateCompany(String name, Company updatedCompany)
+    public void updateCompany(String name, Company updatedCompany) throws InvalidInputException
     {
-        if (StringUtils.hasText(name) && updatedCompany != null)
+        if (!StringUtils.hasText(name))
         {
-            // remove the old one as we might have changed the name, which means that the key changes as well
-            companyMap.remove(name);
-            companyMap.put(updatedCompany.getName(), updatedCompany);
+            throw new InvalidInputException("Company name is invalid!");
         }
+
+        if (updatedCompany == null)
+        {
+            throw new InvalidInputException("Company is invalid!");
+        }
+
+        // remove the old one as we might have changed the name, which means that the key changes as well
+        companyMap.remove(name);
+        companyMap.put(updatedCompany.getName(), updatedCompany);
     }
 
-    public void deleteCompany(String name)
+    public void deleteCompany(String name) throws ApiException
     {
-        if (StringUtils.hasText(name))
+        if (!StringUtils.hasText(name))
         {
-            companyMap.remove(name);
+            throw new InvalidInputException("Company name is invalid!");
+        }
+
+        if (companyMap.remove(name) == null)
+        {
+            throw new ApiException("Tried to remove a non-existing company");
         }
     }
 }

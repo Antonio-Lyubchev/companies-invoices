@@ -1,6 +1,6 @@
 package com.estafet.companies.exception;
 
-public class EntityNotFoundException extends Throwable
+public class EntityNotFoundException extends ApiException
 {
     public EntityNotFoundException()
     {

@@ -1,6 +1,8 @@
 package com.estafet.companies.company;
 
+import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
+import com.estafet.companies.exception.InvalidInputException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,15 +24,9 @@ public class CompanyController
     }
 
     @GetMapping("/companies/{name}")
-    public Company getCompanyByName(@PathVariable("name") String name) throws EntityNotFoundException
+    public Company getCompanyByName(@PathVariable("name") String name) throws EntityNotFoundException, InvalidInputException
     {
-        Company resultCompany = companyService.getCompany(name);
-        if (resultCompany == null)
-        {
-            throw new EntityNotFoundException("Company not found: " + name);
-        }
-
-        return resultCompany;
+        return companyService.getCompany(name);
     }
 
     @PostMapping("/companies")
@@ -40,13 +36,13 @@ public class CompanyController
     }
 
     @PutMapping("/companies/{name}")
-    public void updateCompany(@PathVariable("name") String name, @RequestBody Company company)
+    public void updateCompany(@PathVariable("name") String name, @RequestBody Company company) throws InvalidInputException
     {
         companyService.updateCompany(name, company);
     }
 
     @DeleteMapping("/companies/{name}")
-    public void deleteCompany(@PathVariable("name") String name)
+    public void deleteCompany(@PathVariable("name") String name) throws ApiException
     {
         companyService.deleteCompany(name);
     }
