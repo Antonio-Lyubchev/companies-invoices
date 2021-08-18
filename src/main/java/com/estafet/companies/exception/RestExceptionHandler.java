@@ -35,4 +35,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
         apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
+
+    @ExceptionHandler(InvalidInputException.class)
+    protected ResponseEntity<Object> handleInvalidInput(InvalidInputException ex)
+    {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(ApiException.class)
+    protected ResponseEntity<Object> handleApiException(ApiException ex)
+    {
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
 }
