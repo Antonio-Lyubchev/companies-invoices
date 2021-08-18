@@ -1,4 +1,4 @@
-package com.estafet.companies.models;
+package com.estafet.companies.invoice;
 
 /**
  * This class represents a single invoice product, including the product quantity.

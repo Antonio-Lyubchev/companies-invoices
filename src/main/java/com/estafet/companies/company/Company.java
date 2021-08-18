@@ -1,4 +1,4 @@
-package com.estafet.companies.models;
+package com.estafet.companies.company;
 
 public class Company
 {
@@ -57,5 +57,16 @@ public class Company
     public void setRepresentative(String representative)
     {
         this.representative = representative;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Company{" +
+                "name='" + name + '\'' +
+                ", taxNumber='" + taxNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", representative='" + representative + '\'' +
+                '}';
     }
 }
