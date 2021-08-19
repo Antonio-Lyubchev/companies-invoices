@@ -48,9 +48,17 @@ public class CompanyService
         {
             throw new InvalidInputException("Company is invalid!");
         }
+
+        // post is NOT idempotent, but more than 1 entry of the same company is illogical
+        if (companyMap.containsKey(company.getName()))
+        {
+            throw new InvalidInputException("Tried to add an existing company!");
+        }
+
         companyMap.put(company.getName(), company);
     }
 
+    // TODO: remove name param when we change the key to tax number since it will be unique
     public void updateCompany(String name, Company updatedCompany) throws InvalidInputException
     {
         if (!StringUtils.hasText(name))
@@ -63,6 +71,7 @@ public class CompanyService
             throw new InvalidInputException("Company is invalid!");
         }
 
+        // TODO: improve logic when we change map key to tax id
         // remove the old one as we might have changed the name, which means that the key changes as well
         companyMap.remove(name);
         companyMap.put(updatedCompany.getName(), updatedCompany);

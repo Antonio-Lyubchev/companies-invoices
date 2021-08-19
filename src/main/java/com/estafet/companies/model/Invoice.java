@@ -1,11 +1,12 @@
 package com.estafet.companies.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Invoice
 {
-    private Date dateIssued; // TODO: Is this the only date needed?
+    private LocalDateTime dateIssued;
+    private LocalDateTime dateDue;
     private String invoiceNumber; // TODO: Can it be numerical?
     private String companyTaxNumber;
     private List<InvoiceProduct> products;
@@ -14,22 +15,33 @@ public class Invoice
     {
     }
 
-    public Invoice(Date dateIssued, String invoiceNumber, String companyTaxNumber, List<InvoiceProduct> products)
+    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, String invoiceNumber, String companyTaxNumber, List<InvoiceProduct> products)
     {
         this.dateIssued = dateIssued;
+        this.dateDue = dateDue;
         this.invoiceNumber = invoiceNumber;
         this.companyTaxNumber = companyTaxNumber;
         this.products = products;
     }
 
-    public Date getDateIssued()
+    public LocalDateTime getDateIssued()
     {
         return dateIssued;
     }
 
-    public void setDateIssued(Date dateIssued)
+    public void setDateIssued(LocalDateTime dateIssued)
     {
         this.dateIssued = dateIssued;
+    }
+
+    public LocalDateTime getDateDue()
+    {
+        return dateDue;
+    }
+
+    public void setDateDue(LocalDateTime dateDue)
+    {
+        this.dateDue = dateDue;
     }
 
     public String getInvoiceNumber()

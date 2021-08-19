@@ -1,19 +1,21 @@
 package com.estafet.companies.model;
 
+import java.math.BigDecimal;
+
 /**
  * This class represents a single invoice product, including the product quantity.
  */
 public class InvoiceProduct
 {
     private String name;
-    private double price;
+    private BigDecimal price;
     private int productAmount; // TODO: Is int the best type?
 
     public InvoiceProduct()
     {
     }
 
-    public InvoiceProduct(String name, double price, int amount)
+    public InvoiceProduct(String name, BigDecimal price, int amount)
     {
         this.name = name;
         this.price = price;
@@ -30,12 +32,12 @@ public class InvoiceProduct
         this.name = name;
     }
 
-    public double getPrice()
+    public BigDecimal getPrice()
     {
         return price;
     }
 
-    public void setPrice(double price)
+    public void setPrice(BigDecimal price)
     {
         this.price = price;
     }
@@ -50,8 +52,8 @@ public class InvoiceProduct
         this.productAmount = productAmount;
     }
 
-    public double getTotalProductPrice()
+    public BigDecimal getTotalProductPrice()
     {
-        return price * productAmount;
+        return price.multiply(BigDecimal.valueOf(productAmount));
     }
 }
