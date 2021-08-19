@@ -55,7 +55,6 @@ public class InvoiceService
         return resultInvoice;
     }
 
-    // TODO: should there be an error if we are trying to overwrite an existing entry?
     public void addInvoice(Invoice invoice) throws InvalidInputException
     {
         if (invoice == null)
@@ -63,28 +62,28 @@ public class InvoiceService
             throw new InvalidInputException("Invoice is invalid!");
         }
 
-        // TODO: change company key from name to tax number
-        if (companyService.getCompanyMap().values().stream().noneMatch(c -> c.getTaxNumber().equals(invoice.getCompanyTaxNumber())))
+        if (!companyService.getCompanyMap().containsKey(invoice.getCompanyTaxId()))
         {
-            throw new InvalidInputException("Company with tax number '" + invoice.getCompanyTaxNumber() + "' was not found!");
+            throw new InvalidInputException("Company with tax number '" + invoice.getCompanyTaxId() + "' was not found!");
         }
 
-        invoiceMap.put(invoice.getInvoiceNumber(), invoice);
+        invoiceMap.put(invoice.getInvoiceId(), invoice);
     }
 
-    public void updateInvoice(Invoice updatedInvoice) throws InvalidInputException
+    // TODO: what will happen if invoiceID and invoice id from invoice object differ?
+    public void updateInvoice(String invoiceId, Invoice updatedInvoice) throws InvalidInputException
     {
         if (updatedInvoice == null)
         {
             throw new InvalidInputException("Invoice is invalid!");
         }
 
-        if (!StringUtils.hasText(updatedInvoice.getInvoiceNumber()))
+        if (!StringUtils.hasText(invoiceId))
         {
             throw new InvalidInputException("Invoice number is invalid!");
         }
 
-        invoiceMap.put(updatedInvoice.getInvoiceNumber(), updatedInvoice);
+        invoiceMap.put(invoiceId, updatedInvoice);
     }
 
     public void deleteInvoice(String invoiceNumber) throws ApiException

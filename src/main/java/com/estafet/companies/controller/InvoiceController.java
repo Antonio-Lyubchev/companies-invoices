@@ -40,7 +40,7 @@ public class InvoiceController
     @PutMapping("/invoices/{id}")
     public void updateInvoice(@PathVariable("id") String invoiceId, @RequestBody Invoice invoice) throws InvalidInputException
     {
-        invoiceService.updateInvoice(invoice);
+        invoiceService.updateInvoice(invoiceId, invoice);
     }
 
     @DeleteMapping("/invoices/{id}")

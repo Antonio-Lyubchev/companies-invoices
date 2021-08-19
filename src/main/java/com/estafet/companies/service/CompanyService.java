@@ -15,9 +15,9 @@ public class CompanyService
     private final HashMap<String, Company> companyMap = new HashMap<>()
     {
         {
-            put("company1", new Company("company1", "tax1", "addr1", "repr1"));
-            put("company2", new Company("company2", "tax2", "addr2", "repr2"));
-            put("company3", new Company("company3", "tax3", "addr3", "repr3"));
+            put("taxId1", new Company("company1", "taxId1", "addr1", "repr1"));
+            put("taxId2", new Company("company2", "taxId2", "addr2", "repr2"));
+            put("taxId3", new Company("company3", "taxId3", "addr3", "repr3"));
         }
     };
 
@@ -26,17 +26,17 @@ public class CompanyService
         return companyMap;
     }
 
-    public Company getCompany(String name) throws EntityNotFoundException, InvalidInputException
+    public Company getCompany(String taxId) throws EntityNotFoundException, InvalidInputException
     {
-        if (!StringUtils.hasText(name))
+        if (!StringUtils.hasText(taxId))
         {
-            throw new InvalidInputException("Company name is invalid!");
+            throw new InvalidInputException("Company tax ID is invalid!");
         }
 
-        Company resultCompany = companyMap.getOrDefault(name, null);
+        Company resultCompany = companyMap.getOrDefault(taxId, null);
         if (resultCompany == null)
         {
-            throw new EntityNotFoundException("Company '" + name + "' not found!");
+            throw new EntityNotFoundException("Company with tax ID: '" + taxId + "' not found!");
         }
 
         return resultCompany;
@@ -50,20 +50,20 @@ public class CompanyService
         }
 
         // post is NOT idempotent, but more than 1 entry of the same company is illogical
-        if (companyMap.containsKey(company.getName()))
+        if (companyMap.containsKey(company.getTaxId()))
         {
             throw new InvalidInputException("Tried to add an existing company!");
         }
 
-        companyMap.put(company.getName(), company);
+        companyMap.put(company.getTaxId(), company);
     }
 
-    // TODO: remove name param when we change the key to tax number since it will be unique
-    public void updateCompany(String name, Company updatedCompany) throws InvalidInputException
+    // TODO: what will happen if taxId and taxId from company object differ?
+    public void updateCompany(String taxId, Company updatedCompany) throws InvalidInputException
     {
-        if (!StringUtils.hasText(name))
+        if (!StringUtils.hasText(taxId))
         {
-            throw new InvalidInputException("Company name is invalid!");
+            throw new InvalidInputException("Company tax ID is invalid!");
         }
 
         if (updatedCompany == null)
@@ -71,20 +71,17 @@ public class CompanyService
             throw new InvalidInputException("Company is invalid!");
         }
 
-        // TODO: improve logic when we change map key to tax id
-        // remove the old one as we might have changed the name, which means that the key changes as well
-        companyMap.remove(name);
-        companyMap.put(updatedCompany.getName(), updatedCompany);
+        companyMap.put(taxId, updatedCompany);
     }
 
-    public void deleteCompany(String name) throws ApiException
+    public void deleteCompany(String taxId) throws ApiException
     {
-        if (!StringUtils.hasText(name))
+        if (!StringUtils.hasText(taxId))
         {
-            throw new InvalidInputException("Company name is invalid!");
+            throw new InvalidInputException("Company tax ID is invalid!");
         }
 
-        if (companyMap.remove(name) == null)
+        if (companyMap.remove(taxId) == null)
         {
             throw new ApiException("Tried to remove a non-existing company");
         }

@@ -25,10 +25,10 @@ public class CompanyController
         return companyService.getCompanyMap();
     }
 
-    @GetMapping("/companies/{name}")
-    public Company getCompanyByName(@PathVariable("name") String name) throws EntityNotFoundException, InvalidInputException
+    @GetMapping("/companies/{id}")
+    public Company getCompanyByName(@PathVariable("id") String taxId) throws EntityNotFoundException, InvalidInputException
     {
-        return companyService.getCompany(name);
+        return companyService.getCompany(taxId);
     }
 
     @PostMapping("/companies")
@@ -37,15 +37,15 @@ public class CompanyController
         companyService.addCompany(company);
     }
 
-    @PutMapping("/companies/{name}")
-    public void updateCompany(@PathVariable("name") String name, @RequestBody Company company) throws InvalidInputException
+    @PutMapping("/companies/{id}")
+    public void updateCompany(@PathVariable("id") String taxId, @RequestBody Company company) throws InvalidInputException
     {
-        companyService.updateCompany(name, company);
+        companyService.updateCompany(taxId, company);
     }
 
-    @DeleteMapping("/companies/{name}")
-    public void deleteCompany(@PathVariable("name") String name) throws ApiException
+    @DeleteMapping("/companies/{id}")
+    public void deleteCompany(@PathVariable("id") String taxId) throws ApiException
     {
-        companyService.deleteCompany(name);
+        companyService.deleteCompany(taxId);
     }
 }

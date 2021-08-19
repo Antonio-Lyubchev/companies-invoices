@@ -7,20 +7,20 @@ public class Invoice
 {
     private LocalDateTime dateIssued;
     private LocalDateTime dateDue;
-    private String invoiceNumber; // TODO: Can it be numerical?
-    private String companyTaxNumber;
+    private String invoiceId;
+    private String companyTaxId;
     private List<InvoiceProduct> products;
 
     public Invoice()
     {
     }
 
-    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, String invoiceNumber, String companyTaxNumber, List<InvoiceProduct> products)
+    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, String invoiceId, String companyTaxId, List<InvoiceProduct> products)
     {
         this.dateIssued = dateIssued;
         this.dateDue = dateDue;
-        this.invoiceNumber = invoiceNumber;
-        this.companyTaxNumber = companyTaxNumber;
+        this.invoiceId = invoiceId;
+        this.companyTaxId = companyTaxId;
         this.products = products;
     }
 
@@ -44,24 +44,24 @@ public class Invoice
         this.dateDue = dateDue;
     }
 
-    public String getInvoiceNumber()
+    public String getInvoiceId()
     {
-        return invoiceNumber;
+        return invoiceId;
     }
 
-    public void setInvoiceNumber(String invoiceNumber)
+    public void setInvoiceId(String invoiceId)
     {
-        this.invoiceNumber = invoiceNumber;
+        this.invoiceId = invoiceId;
     }
 
-    public String getCompanyTaxNumber()
+    public String getCompanyTaxId()
     {
-        return companyTaxNumber;
+        return companyTaxId;
     }
 
-    public void setCompanyTaxNumber(String companyTaxNumber)
+    public void setCompanyTaxId(String companyTaxId)
     {
-        this.companyTaxNumber = companyTaxNumber;
+        this.companyTaxId = companyTaxId;
     }
 
     public List<InvoiceProduct> getProducts()

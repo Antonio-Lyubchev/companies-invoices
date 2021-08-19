@@ -3,7 +3,7 @@ package com.estafet.companies.model;
 public class Company
 {
     private String name;
-    private String taxNumber;
+    private String taxId;
     private String address;
     private String representative;
 
@@ -11,10 +11,10 @@ public class Company
     {
     }
 
-    public Company(String name, String taxNumber, String address, String representative)
+    public Company(String name, String taxId, String address, String representative)
     {
         this.name = name;
-        this.taxNumber = taxNumber;
+        this.taxId = taxId;
         this.address = address;
         this.representative = representative;
     }
@@ -29,14 +29,14 @@ public class Company
         this.name = name;
     }
 
-    public String getTaxNumber()
+    public String getTaxId()
     {
-        return taxNumber;
+        return taxId;
     }
 
-    public void setTaxNumber(String taxNumber)
+    public void setTaxId(String taxId)
     {
-        this.taxNumber = taxNumber;
+        this.taxId = taxId;
     }
 
     public String getAddress()
@@ -57,16 +57,5 @@ public class Company
     public void setRepresentative(String representative)
     {
         this.representative = representative;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Company{" +
-                "name='" + name + '\'' +
-                ", taxNumber='" + taxNumber + '\'' +
-                ", address='" + address + '\'' +
-                ", representative='" + representative + '\'' +
-                '}';
     }
 }
