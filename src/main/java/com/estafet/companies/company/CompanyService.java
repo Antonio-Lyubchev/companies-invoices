@@ -35,18 +35,19 @@ public class CompanyService
         Company resultCompany = companyMap.getOrDefault(name, null);
         if (resultCompany == null)
         {
-            throw new EntityNotFoundException("Company not found!");
+            throw new EntityNotFoundException("Company '" + name + "' not found!");
         }
 
         return resultCompany;
     }
 
-    public void addCompany(Company company)
+    public void addCompany(Company company) throws InvalidInputException
     {
-        if (company != null)
+        if (company == null)
         {
-            companyMap.put(company.getName(), company);
+            throw new InvalidInputException("Company is invalid!");
         }
+        companyMap.put(company.getName(), company);
     }
 
     public void updateCompany(String name, Company updatedCompany) throws InvalidInputException

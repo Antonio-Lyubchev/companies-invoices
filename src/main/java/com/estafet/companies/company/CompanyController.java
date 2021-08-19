@@ -30,7 +30,7 @@ public class CompanyController
     }
 
     @PostMapping("/companies")
-    public void addCompany(@RequestBody Company company)
+    public void addCompany(@RequestBody Company company) throws InvalidInputException
     {
         companyService.addCompany(company);
     }
