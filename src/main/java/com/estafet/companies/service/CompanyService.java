@@ -83,7 +83,7 @@ public class CompanyService
 
         if (companyMap.remove(taxId) == null)
         {
-            throw new ApiException("Tried to remove a non-existing company");
+            throw new EntityNotFoundException("Tried to remove a non-existing company");
         }
     }
 }

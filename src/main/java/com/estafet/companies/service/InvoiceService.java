@@ -95,7 +95,7 @@ public class InvoiceService
 
         if (invoiceMap.remove(invoiceNumber) == null)
         {
-            throw new ApiException("Tried to remove a non-existing invoice");
+            throw new EntityNotFoundException("Tried to remove a non-existing invoice");
         }
     }
 }
