@@ -7,7 +7,8 @@ import com.estafet.companies.model.Invoice;
 import com.estafet.companies.service.InvoiceService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class InvoiceController
@@ -20,9 +21,9 @@ public class InvoiceController
     }
 
     @GetMapping("/invoices")
-    public HashMap<String, Invoice> getAllInvoices()
+    public List<Invoice> getAllInvoices()
     {
-        return invoiceService.getInvoiceMap();
+        return new ArrayList<>(invoiceService.getInvoiceMap().values());
     }
 
     @GetMapping("/invoices/{id}")

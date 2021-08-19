@@ -1,13 +1,14 @@
 package com.estafet.companies.controller;
 
-import com.estafet.companies.model.Company;
-import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
+import com.estafet.companies.model.Company;
+import com.estafet.companies.service.CompanyService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class CompanyController
@@ -20,9 +21,9 @@ public class CompanyController
     }
 
     @GetMapping("/companies")
-    public HashMap<String, Company> getAllCompanies()
+    public List<Company> getAllCompanies()
     {
-        return companyService.getCompanyMap();
+        return new ArrayList<>(companyService.getCompanyMap().values());
     }
 
     @GetMapping("/companies/{id}")
