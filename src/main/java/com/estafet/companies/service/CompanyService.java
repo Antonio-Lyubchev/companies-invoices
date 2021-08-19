@@ -1,8 +1,9 @@
-package com.estafet.companies.company;
+package com.estafet.companies.service;
 
 import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
+import com.estafet.companies.model.Company;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

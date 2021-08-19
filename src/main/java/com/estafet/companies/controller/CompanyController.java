@@ -1,5 +1,7 @@
-package com.estafet.companies.company;
+package com.estafet.companies.controller;
 
+import com.estafet.companies.model.Company;
+import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;

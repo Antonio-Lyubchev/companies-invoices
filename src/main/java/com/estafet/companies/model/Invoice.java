@@ -1,4 +1,4 @@
-package com.estafet.companies.invoice;
+package com.estafet.companies.model;
 
 import java.util.Date;
 import java.util.List;

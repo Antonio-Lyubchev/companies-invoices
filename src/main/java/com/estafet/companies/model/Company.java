@@ -1,4 +1,4 @@
-package com.estafet.companies.company;
+package com.estafet.companies.model;
 
 public class Company
 {
