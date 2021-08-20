@@ -32,13 +32,14 @@ public class CompanyController
         return companyService.getCompany(taxId);
     }
 
-    @PostMapping("/companies")
+    @PutMapping("/companies")
+    //TODO it should return the id of the registered company
     public void addCompany(@RequestBody Company company) throws InvalidInputException
     {
         companyService.addCompany(company);
     }
 
-    @PutMapping("/companies/{id}")
+    @PostMapping("/companies/{id}")
     public void updateCompany(@PathVariable("id") String taxId, @RequestBody Company company) throws InvalidInputException
     {
         companyService.updateCompany(taxId, company);
