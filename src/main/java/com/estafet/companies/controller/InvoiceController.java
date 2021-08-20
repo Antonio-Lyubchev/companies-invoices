@@ -3,7 +3,9 @@ package com.estafet.companies.controller;
 import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
+import com.estafet.companies.model.Company;
 import com.estafet.companies.model.Invoice;
+import com.estafet.companies.model.InvoiceRequest;
 import com.estafet.companies.service.InvoiceService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -21,6 +23,7 @@ import java.util.List;
 public class InvoiceController
 {
     private final InvoiceService invoiceService;
+    //TODO ingest the customer's service
 
     InvoiceController(InvoiceService invoiceService)
     {
@@ -39,13 +42,29 @@ public class InvoiceController
         return invoiceService.getInvoice(invoiceId);
     }
 
-    @PostMapping("/invoices")
-    public void addInvoice(@RequestBody Invoice invoice) throws InvalidInputException
+    @PutMapping("/invoices")
+    //TODO should return the sequent number of the invoice 
+    public void addInvoice(@RequestBody InvoiceRequest request) throws InvalidInputException
     {
+    	Invoice invoice = prepareInvoice(request);
+    	//TODO you should register the company first
+    	String companyId = registerCustomer(request); 
         invoiceService.addInvoice(invoice);
     }
+    
+    //TODO
+    private Invoice prepareInvoice(InvoiceRequest request) {
+    	return null;
+    } 
+    
+    
+  //TODO should call the customer service/ use rest template to call the service to register the customer
+    private String registerCustomer(InvoiceRequest request) {
+    	return null;
+    }
+    
 
-    @PutMapping("/invoices/{id}")
+    @PostMapping("/invoices/{id}")
     public void updateInvoice(@PathVariable("id") String invoiceId, @RequestBody Invoice invoice) throws InvalidInputException
     {
         invoiceService.updateInvoice(invoiceId, invoice);
