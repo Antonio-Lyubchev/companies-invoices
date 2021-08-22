@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class CompanyService
@@ -56,6 +57,14 @@ public class CompanyService
         }
 
         companyMap.put(company.getTaxId(), company);
+    }
+
+    public void addCompanies(List<Company> companies) throws InvalidInputException
+    {
+        for (Company c : companies)
+        {
+            addCompany(c);
+        }
     }
 
     // TODO: what will happen if taxId and taxId from company object differ?

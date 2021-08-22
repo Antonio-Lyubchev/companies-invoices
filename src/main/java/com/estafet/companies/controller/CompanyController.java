@@ -5,8 +5,14 @@ import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,5 +54,17 @@ public class CompanyController
     public void deleteCompany(@PathVariable("id") String taxId) throws ApiException
     {
         companyService.deleteCompany(taxId);
+    }
+
+    @PostMapping(path = "/companies", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void saveCompany(@RequestPart MultipartFile file) throws IOException, InvalidInputException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory typeFactory = mapper.getTypeFactory();
+        CollectionType collectionType = typeFactory.constructCollectionType(List.class, Company.class);
+
+        List<Company> companies = mapper.readValue(file.getBytes(), collectionType);
+
+        companyService.addCompanies(companies);
     }
 }
