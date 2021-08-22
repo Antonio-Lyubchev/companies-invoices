@@ -34,11 +34,6 @@ public class InvoiceService
         invoiceMap.put("invoiceNumber3", new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "invoiceNumber3", "tax3", sampleProducts));
     }
 
-    public HashMap<String, Invoice> getInvoiceMap()
-    {
-        return invoiceMap;
-    }
-
     public Invoice getInvoice(String invoiceNumber) throws EntityNotFoundException, InvalidInputException
     {
         if (!StringUtils.hasText(invoiceNumber))
@@ -105,5 +100,15 @@ public class InvoiceService
         {
             throw new EntityNotFoundException("Tried to remove a non-existing invoice");
         }
+    }
+
+    public int getInvoiceCount()
+    {
+        return invoiceMap.size();
+    }
+
+    public List<Invoice> getAllInvoicesAsList()
+    {
+        return new ArrayList<>(invoiceMap.values());
     }
 }
