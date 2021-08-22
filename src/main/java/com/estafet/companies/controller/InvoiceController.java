@@ -3,9 +3,9 @@ package com.estafet.companies.controller;
 import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
-import com.estafet.companies.model.Company;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.model.InvoiceRequest;
+import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.service.InvoiceService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,17 +16,18 @@ import java.util.List;
 public class InvoiceController
 {
     private final InvoiceService invoiceService;
-    //TODO ingest the customer's service
+    private final CompanyService companyService;
 
-    InvoiceController(InvoiceService invoiceService)
+    InvoiceController(InvoiceService invoiceService, CompanyService companyService)
     {
         this.invoiceService = invoiceService;
+        this.companyService = companyService;
     }
 
     @GetMapping("/invoices")
     public List<Invoice> getAllInvoices()
     {
-        return new ArrayList<>(invoiceService.getInvoiceMap().values());
+        return new ArrayList<>(invoiceService.getAllInvoicesAsList());
     }
 
     @GetMapping("/invoices/{id}")
@@ -36,26 +37,29 @@ public class InvoiceController
     }
 
     @PutMapping("/invoices")
-    //TODO should return the sequent number of the invoice 
-    public void addInvoice(@RequestBody InvoiceRequest request) throws InvalidInputException
+    public int addInvoice(@RequestBody InvoiceRequest request) throws InvalidInputException
     {
-    	Invoice invoice = prepareInvoice(request);
-    	//TODO you should register the company first
-    	String companyId = registerCustomer(request); 
+        Invoice invoice = prepareInvoice(request);
+        String companyId = registerCustomer(request);
         invoiceService.addInvoice(invoice);
+        return invoiceService.getInvoiceCount();
     }
-    
-    //TODO
-    private Invoice prepareInvoice(InvoiceRequest request) {
-    	return null;
-    } 
-    
-    
-  //TODO should call the customer service/ use rest template to call the service to register the customer
-    private String registerCustomer(InvoiceRequest request) {
-    	return null;
+
+    private Invoice prepareInvoice(InvoiceRequest request)
+    {
+        return new Invoice(request.getDateIssued(),
+                request.getDateDue(),
+                String.valueOf(invoiceService.getInvoiceCount() + 1),
+                request.getCompany().getTaxId(),
+                request.getProducts());
     }
-    
+
+
+    private String registerCustomer(InvoiceRequest request) throws InvalidInputException
+    {
+        return companyService.addCompany(request.getCompany());
+    }
+
 
     @PostMapping("/invoices/{id}")
     public void updateInvoice(@PathVariable("id") String invoiceId, @RequestBody Invoice invoice) throws InvalidInputException

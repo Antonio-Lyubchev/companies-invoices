@@ -42,7 +42,7 @@ public class CompanyService
         return resultCompany;
     }
 
-    public void addCompany(Company company) throws InvalidInputException
+    public String addCompany(Company company) throws InvalidInputException
     {
         if (company == null)
         {
@@ -55,7 +55,7 @@ public class CompanyService
             throw new InvalidInputException("Tried to add an existing company!");
         }
 
-        companyMap.put(company.getTaxId(), company);
+        return companyMap.put(company.getTaxId(), company).getTaxId();
     }
 
     // TODO: what will happen if taxId and taxId from company object differ?
