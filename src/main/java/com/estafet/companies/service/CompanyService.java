@@ -7,25 +7,17 @@ import com.estafet.companies.model.Company;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 public class CompanyService
 {
-    private final HashMap<String, Company> companyMap = new HashMap<>()
-    {
-        {
-            put("taxId1", new Company("company1", "taxId1", "addr1", "repr1"));
-            put("taxId2", new Company("company2", "taxId2", "addr2", "repr2"));
-            put("taxId3", new Company("company3", "taxId3", "addr3", "repr3"));
-        }
-    };
-
-    public HashMap<String, Company> getCompanyMap()
-    {
-        return companyMap;
-    }
+    private final List<Company> companyList = new ArrayList<>(Arrays.asList(
+            new Company("company1", "taxId1", "addr1", "repr1"),
+            new Company("company2", "taxId2", "addr2", "repr2"),
+            new Company("company3", "taxId3", "addr3", "repr3"))
+    );
 
     public Company getCompany(String taxId) throws EntityNotFoundException, InvalidInputException
     {
@@ -34,29 +26,31 @@ public class CompanyService
             throw new InvalidInputException("Company tax ID is invalid!");
         }
 
-        Company resultCompany = companyMap.getOrDefault(taxId, null);
-        if (resultCompany == null)
-        {
-            throw new EntityNotFoundException("Company with tax ID: '" + taxId + "' not found!");
-        }
-
-        return resultCompany;
+        return companyList.stream()
+                .filter(c -> c.getTaxId().equals(taxId))
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException("Company with tax ID: '" + taxId + "' not found!"));
     }
 
-    public String addCompany(Company company) throws InvalidInputException
+    public String addCompany(Company newCompany) throws InvalidInputException
     {
-        if (company == null)
+        if (newCompany == null)
         {
             throw new InvalidInputException("Company is invalid!");
         }
 
-        // post is NOT idempotent, but more than 1 entry of the same company is illogical
-        if (companyMap.containsKey(company.getTaxId()))
+        Optional<Company> company = companyList.stream()
+                .filter(c -> c.getTaxId().equals(newCompany.getTaxId()))
+                .findAny();
+
+        if (company.isPresent())
         {
             throw new InvalidInputException("Tried to add an existing company!");
         }
 
-        return companyMap.put(company.getTaxId(), company).getTaxId();
+        companyList.add(newCompany);
+
+        return newCompany.getTaxId();
     }
 
     public void addCompanies(List<Company> companies) throws InvalidInputException
@@ -67,7 +61,6 @@ public class CompanyService
         }
     }
 
-    // TODO: what will happen if taxId and taxId from company object differ?
     public void updateCompany(String taxId, Company updatedCompany) throws InvalidInputException
     {
         if (!StringUtils.hasText(taxId))
@@ -80,7 +73,18 @@ public class CompanyService
             throw new InvalidInputException("Company is invalid!");
         }
 
-        companyMap.put(taxId, updatedCompany);
+        int indexToUpdate = IntStream.range(0, companyList.size())
+                .filter(i -> companyList.get(i).getTaxId().equals(taxId))
+                .findFirst()
+                .orElse(-1);
+
+        if (indexToUpdate != -1)
+        {
+            companyList.set(indexToUpdate, updatedCompany);
+        } else
+        {
+            companyList.add(updatedCompany);
+        }
     }
 
     public void deleteCompany(String taxId) throws ApiException
@@ -90,9 +94,24 @@ public class CompanyService
             throw new InvalidInputException("Company tax ID is invalid!");
         }
 
-        if (companyMap.remove(taxId) == null)
+        // if no elements got removed, throw so we can return 404
+        if (!companyList.removeIf(c -> c.getTaxId().equals(taxId)))
         {
             throw new EntityNotFoundException("Tried to remove a non-existing company");
         }
+    }
+
+    public boolean isCompanyExistent(String taxId)
+    {
+        Optional<Company> company = companyList.stream()
+                .filter(c -> c.getTaxId().equals(taxId))
+                .findAny();
+
+        return company.isPresent();
+    }
+
+    public List<Company> getAllCompanies()
+    {
+        return Collections.unmodifiableList(companyList);
     }
 }

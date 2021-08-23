@@ -1,35 +1,42 @@
 package com.estafet.companies.utils;
 
-import java.io.IOException;
-
-import com.estafet.companies.model.InvoiceRequest;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.estafet.companies.configuration.ObjectMapperConfiguration;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.springframework.context.annotation.Configuration;
 
-public class JSONParser {
-	
-	private ObjectMapper objectMapper;
-	
-	public JSONParser() {
-		this.objectMapper = new ObjectMapper();
-		this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		this.objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-		this.objectMapper.configOverride(java.util.Date.class)
-	       .setFormat(JsonFormat.Value.forPattern("dd-MM-yyyy"));
-	
-	}
-	
-	
-	public <T> T parseString(String jsonContents, Class<T> theclass) throws IOException, JsonParseException{
-		JsonFactory factory = new JsonFactory();
-		factory.setCodec(this.objectMapper);
-		JsonParser parser = factory.createParser(jsonContents);
-		return parser.readValueAs(theclass);
-	}
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Custom JSON parser util class, when injected it will use a preconfigured Object mapper.
+ * @see ObjectMapperConfiguration#objectMapper()
+ */
+@Configuration
+public class JSONParser
+{
+    private final ObjectMapper objectMapper;
+
+    public JSONParser(ObjectMapper objectMapper)
+    {
+        this.objectMapper = objectMapper;
+    }
+
+    public <T> T parseString(String jsonContents, Class<T> className) throws IOException
+    {
+        JsonFactory factory = new JsonFactory();
+        factory.setCodec(this.objectMapper);
+        JsonParser parser = factory.createParser(jsonContents);
+        return parser.readValueAs(className);
+    }
+
+    public <T> List<T> parseList(byte[] jsonContents, Class<T> className) throws IOException
+    {
+        TypeFactory t = TypeFactory.defaultInstance();
+
+        return objectMapper.readValue(jsonContents, t.constructCollectionType(ArrayList.class, className));
+    }
 }

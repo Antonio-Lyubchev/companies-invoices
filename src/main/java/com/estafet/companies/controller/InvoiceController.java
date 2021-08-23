@@ -7,16 +7,12 @@ import com.estafet.companies.model.Invoice;
 import com.estafet.companies.model.InvoiceRequest;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.service.InvoiceService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.estafet.companies.utils.JSONParser;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,17 +20,19 @@ public class InvoiceController
 {
     private final InvoiceService invoiceService;
     private final CompanyService companyService;
+    private final JSONParser jsonParser;
 
-    InvoiceController(InvoiceService invoiceService, CompanyService companyService)
+    InvoiceController(InvoiceService invoiceService, CompanyService companyService, JSONParser jsonParser)
     {
         this.invoiceService = invoiceService;
         this.companyService = companyService;
+        this.jsonParser = jsonParser;
     }
 
     @GetMapping("/invoices")
     public List<Invoice> getAllInvoices()
     {
-        return new ArrayList<>(invoiceService.getAllInvoicesAsList());
+        return invoiceService.getAllInvoicesAsList();
     }
 
     @GetMapping("/invoices/{id}")
@@ -67,7 +65,6 @@ public class InvoiceController
         return companyService.addCompany(request.getCompany());
     }
 
-
     @PostMapping("/invoices/{id}")
     public void updateInvoice(@PathVariable("id") String invoiceId, @RequestBody Invoice invoice) throws InvalidInputException
     {
@@ -83,14 +80,7 @@ public class InvoiceController
     @PostMapping(path = "/invoices", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addInvoice(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
-        // TODO: implement parser class
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        List<Invoice> invoices = mapper.readValue(file.getBytes(), new TypeReference<>()
-        {
-        });
+        List<Invoice> invoices = jsonParser.parseList(file.getBytes(), Invoice.class);
 
         invoiceService.addInvoices(invoices);
     }
