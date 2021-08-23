@@ -5,9 +5,8 @@ import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,10 +59,10 @@ public class CompanyController
     public void saveCompany(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
         ObjectMapper mapper = new ObjectMapper();
-        TypeFactory typeFactory = mapper.getTypeFactory();
-        CollectionType collectionType = typeFactory.constructCollectionType(List.class, Company.class);
 
-        List<Company> companies = mapper.readValue(file.getBytes(), collectionType);
+        List<Company> companies = mapper.readValue(file.getBytes(), new TypeReference<>()
+        {
+        });
 
         companyService.addCompanies(companies);
     }
