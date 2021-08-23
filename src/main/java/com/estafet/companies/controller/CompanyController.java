@@ -44,9 +44,9 @@ public class CompanyController
     }
 
     @PostMapping("/companies/{id}")
-    public void updateCompany(@PathVariable("id") String taxId, @RequestBody Company company) throws InvalidInputException
+    public String updateCompany(@PathVariable("id") String taxId, @RequestBody Company company) throws InvalidInputException
     {
-        companyService.updateCompany(taxId, company);
+        return companyService.updateCompany(taxId, company);
     }
 
     @DeleteMapping("/companies/{id}")

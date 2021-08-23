@@ -61,14 +61,14 @@ public class CompanyService
         }
     }
 
-    public void updateCompany(String taxId, Company updatedCompany) throws InvalidInputException
+    public String updateCompany(String taxId, Company newCompany) throws InvalidInputException
     {
         if (!StringUtils.hasText(taxId))
         {
             throw new InvalidInputException("Company tax ID is invalid!");
         }
 
-        if (updatedCompany == null)
+        if (newCompany == null)
         {
             throw new InvalidInputException("Company is invalid!");
         }
@@ -80,11 +80,13 @@ public class CompanyService
 
         if (indexToUpdate != -1)
         {
-            companyList.set(indexToUpdate, updatedCompany);
+            companyList.set(indexToUpdate, newCompany);
         } else
         {
-            companyList.add(updatedCompany);
+            companyList.add(newCompany);
         }
+
+        return newCompany.getTaxId();
     }
 
     public void deleteCompany(String taxId) throws ApiException
