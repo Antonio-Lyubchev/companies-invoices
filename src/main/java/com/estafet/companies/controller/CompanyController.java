@@ -56,7 +56,7 @@ public class CompanyController
     }
 
     @PostMapping(path = "/companies", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void saveCompany(@RequestPart MultipartFile file) throws IOException, InvalidInputException
+    public void addCompany(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
         ObjectMapper mapper = new ObjectMapper();
 

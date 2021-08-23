@@ -70,6 +70,14 @@ public class InvoiceService
         invoiceMap.put(invoice.getInvoiceId(), invoice);
     }
 
+    public void addInvoices(List<Invoice> invoices) throws InvalidInputException
+    {
+        for (Invoice invoice : invoices)
+        {
+            addInvoice(invoice);
+        }
+    }
+
     // TODO: what will happen if invoiceID and invoice id from invoice object differ?
     public void updateInvoice(String invoiceId, Invoice updatedInvoice) throws InvalidInputException
     {
