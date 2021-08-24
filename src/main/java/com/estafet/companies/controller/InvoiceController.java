@@ -34,7 +34,7 @@ public class InvoiceController
     }
 
     @GetMapping("/invoices/{id}")
-    public Invoice getInvoiceById(@PathVariable("id") String invoiceId) throws EntityNotFoundException, InvalidInputException
+    public Invoice getInvoiceById(@PathVariable("id") int invoiceId) throws EntityNotFoundException, InvalidInputException
     {
         return invoiceService.getInvoice(invoiceId);
     }
@@ -44,15 +44,13 @@ public class InvoiceController
     {
         Invoice invoice = prepareInvoice(request);
         String companyId = registerCustomer(request);
-        invoiceService.addInvoice(invoice);
-        return invoiceService.getInvoiceCount();
+        return invoiceService.addInvoice(invoice);
     }
 
     private Invoice prepareInvoice(InvoiceRequest request)
     {
         return new Invoice(request.getDateIssued(),
                 request.getDateDue(),
-                String.valueOf(invoiceService.getInvoiceCount() + 1),
                 request.getCompany().getTaxId(),
                 request.getProducts());
     }
@@ -64,13 +62,13 @@ public class InvoiceController
     }
 
     @PostMapping("/invoices/{id}")
-    public void updateInvoice(@PathVariable("id") String invoiceId, @RequestBody Invoice invoice) throws InvalidInputException
+    public void updateInvoice(@PathVariable("id") int invoiceId, @RequestBody Invoice invoice) throws InvalidInputException
     {
         invoiceService.updateInvoice(invoiceId, invoice);
     }
 
     @DeleteMapping("/invoices/{id}")
-    public void deleteInvoice(@PathVariable("id") String invoiceId) throws ApiException
+    public void deleteInvoice(@PathVariable("id") int invoiceId) throws ApiException
     {
         invoiceService.deleteInvoice(invoiceId);
     }

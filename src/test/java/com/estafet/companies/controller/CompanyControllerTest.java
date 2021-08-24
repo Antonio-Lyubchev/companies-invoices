@@ -50,9 +50,9 @@ public class CompanyControllerTest
         mockMvc.perform(get("/companies"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder(testCompanyList.get(0).getName(), testCompanyList.get(1).getName(), testCompanyList.get(2).getName())))
-                .andExpect(jsonPath("$[*].taxId", containsInAnyOrder(testCompanyList.get(0).getTaxId(), testCompanyList.get(1).getTaxId(), testCompanyList.get(2).getTaxId())))
-                .andExpect(jsonPath("$[*].address", containsInAnyOrder(testCompanyList.get(0).getAddress(), testCompanyList.get(1).getAddress(), testCompanyList.get(2).getAddress())));
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(testCompanyList.stream().map(Company::getName).toArray())))
+                .andExpect(jsonPath("$[*].taxId", containsInAnyOrder(testCompanyList.stream().map(Company::getTaxId).toArray())))
+                .andExpect(jsonPath("$[*].address", containsInAnyOrder(testCompanyList.stream().map(Company::getAddress).toArray())));
 
         mockMvc.perform(get("/companies"))
                 .andDo(print())
@@ -64,7 +64,7 @@ public class CompanyControllerTest
     public void getCompanyByName() throws Exception, InvalidInputException, EntityNotFoundException
     {
         Company companyForTest = testCompanyList.get(1);
-        when(service.getCompany(companyForTest.getTaxId())).thenReturn(testCompanyList.get(1));
+        when(service.getCompany(companyForTest.getTaxId())).thenReturn(companyForTest);
 
         mockMvc.perform(get("/companies/" + companyForTest.getTaxId()))
                 .andDo(print())

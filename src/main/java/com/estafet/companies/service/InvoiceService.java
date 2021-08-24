@@ -6,7 +6,6 @@ import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.model.InvoiceProduct;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 @Service
@@ -21,6 +21,8 @@ public class InvoiceService
 {
     private final CompanyService companyService;
     private final List<Invoice> invoiceList;
+
+    private AtomicInteger invoiceCounter;
 
     public InvoiceService(CompanyService companyService)
     {
@@ -32,26 +34,21 @@ public class InvoiceService
         sampleProducts.add(new InvoiceProduct("product3", new BigDecimal("150"), 6));
 
         invoiceList = new ArrayList<>(Arrays.asList(
-                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "invoiceNumber1", "tax1", sampleProducts),
-                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "invoiceNumber2", "tax2", sampleProducts),
-                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "invoiceNumber3", "tax3", sampleProducts)
+                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "tax1", sampleProducts),
+                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "tax2", sampleProducts),
+                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "tax3", sampleProducts)
         ));
     }
 
-    public Invoice getInvoice(String invoiceNumber) throws EntityNotFoundException, InvalidInputException
+    public Invoice getInvoice(int invoiceNumber) throws EntityNotFoundException, InvalidInputException
     {
-        if (!StringUtils.hasText(invoiceNumber))
-        {
-            throw new InvalidInputException("Invoice number is invalid!");
-        }
-
         return invoiceList.stream()
-                .filter(c -> c.getInvoiceId().equals(invoiceNumber))
+                .filter(c -> c.getInvoiceId() == invoiceNumber)
                 .findAny()
                 .orElseThrow(() -> new EntityNotFoundException("Invoice '" + invoiceNumber + "' not found!"));
     }
 
-    public void addInvoice(Invoice newInvoice) throws InvalidInputException
+    public int addInvoice(Invoice newInvoice) throws InvalidInputException
     {
         if (newInvoice == null)
         {
@@ -63,7 +60,10 @@ public class InvoiceService
             throw new InvalidInputException("Company with tax number '" + newInvoice.getCompanyTaxId() + "' was not found!");
         }
 
+        newInvoice.setInvoiceId(getNextUniqueIndex());
         invoiceList.add(newInvoice);
+
+        return newInvoice.getInvoiceId();
     }
 
     public void addInvoices(List<Invoice> invoices) throws InvalidInputException
@@ -74,20 +74,15 @@ public class InvoiceService
         }
     }
 
-    public void updateInvoice(String invoiceId, Invoice updatedInvoice) throws InvalidInputException
+    public void updateInvoice(int invoiceId, Invoice updatedInvoice) throws InvalidInputException
     {
         if (updatedInvoice == null)
         {
             throw new InvalidInputException("Invoice is invalid!");
         }
 
-        if (!StringUtils.hasText(invoiceId))
-        {
-            throw new InvalidInputException("Invoice number is invalid!");
-        }
-
         int indexToUpdate = IntStream.range(0, invoiceList.size())
-                .filter(i -> invoiceList.get(i).getInvoiceId().equals(invoiceId))
+                .filter(i -> invoiceList.get(i).getInvoiceId() == invoiceId)
                 .findFirst()
                 .orElse(-1);
 
@@ -100,27 +95,22 @@ public class InvoiceService
         }
     }
 
-    public void deleteInvoice(String invoiceNumber) throws ApiException
+    public void deleteInvoice(int invoiceId) throws ApiException
     {
-        if (!StringUtils.hasText(invoiceNumber))
-        {
-            throw new InvalidInputException("Invoice number is invalid!");
-        }
-
         // if no elements got removed, throw so we can return 404
-        if (!invoiceList.removeIf(i -> i.getInvoiceId().equals(invoiceNumber)))
+        if (!invoiceList.removeIf(i -> i.getInvoiceId() == invoiceId))
         {
             throw new EntityNotFoundException("Tried to remove a non-existing invoice");
         }
     }
 
-    public int getInvoiceCount()
-    {
-        return invoiceList.size();
-    }
-
     public List<Invoice> getAllInvoicesAsList()
     {
         return Collections.unmodifiableList(invoiceList);
+    }
+
+    private int getNextUniqueIndex()
+    {
+        return invoiceCounter.getAndIncrement();
     }
 }

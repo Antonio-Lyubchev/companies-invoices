@@ -25,7 +25,10 @@ public class JSONParser
     private static ObjectMapper objectMapper;
 
     @Autowired
-    private JSONParser(ObjectMapper objectMapper) { JSONParser.objectMapper = objectMapper;}
+    private JSONParser(ObjectMapper objectMapper)
+    {
+        JSONParser.objectMapper = objectMapper;
+    }
 
     public static <T> T fromJsonToObject(String jsonContents, Class<T> className) throws IOException
     {
@@ -42,13 +45,25 @@ public class JSONParser
         return objectMapper.readValue(jsonContents, t.constructCollectionType(ArrayList.class, className));
     }
 
-    public static String fromObjectToJsonString(Object obj) throws JsonProcessingException
+    public static String fromObjectToJsonString(Object obj)
     {
-        return objectMapper.writeValueAsString(obj);
+        try
+        {
+            return objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static <T> String fromObjectListToJsonString(List<T> objectList) throws JsonProcessingException
+    public static <T> String fromObjectListToJsonString(List<T> objectList)
     {
-        return objectMapper.writeValueAsString(objectList);
+        try
+        {
+            return objectMapper.writeValueAsString(objectList);
+        } catch (JsonProcessingException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

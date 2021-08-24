@@ -7,7 +7,7 @@ public class Invoice
 {
     private LocalDateTime dateIssued;
     private LocalDateTime dateDue;
-    private String invoiceId;
+    private int invoiceId;
     private String companyTaxId;
     private List<InvoiceProduct> products;
 
@@ -15,11 +15,10 @@ public class Invoice
     {
     }
 
-    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, String invoiceId, String companyTaxId, List<InvoiceProduct> products)
+    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, String companyTaxId, List<InvoiceProduct> products)
     {
         this.dateIssued = dateIssued;
         this.dateDue = dateDue;
-        this.invoiceId = invoiceId;
         this.companyTaxId = companyTaxId;
         this.products = products;
     }
@@ -44,12 +43,12 @@ public class Invoice
         this.dateDue = dateDue;
     }
 
-    public String getInvoiceId()
+    public int getInvoiceId()
     {
         return invoiceId;
     }
 
-    public void setInvoiceId(String invoiceId)
+    public void setInvoiceId(int invoiceId)
     {
         this.invoiceId = invoiceId;
     }

@@ -3,6 +3,7 @@ package com.estafet.companies.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * This class represents a single invoice product, including the product quantity.
@@ -57,6 +58,6 @@ public class InvoiceProduct
 
     public BigDecimal getTotalProductPrice()
     {
-        return price.multiply(BigDecimal.valueOf(productAmount));
+        return price.multiply(BigDecimal.valueOf(productAmount)).setScale(2, RoundingMode.HALF_EVEN);
     }
 }

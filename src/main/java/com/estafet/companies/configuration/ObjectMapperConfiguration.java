@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Custom configuration for JSON objectmapper
+ *
  * @see com.estafet.companies.utils.JSONParser
  */
 @Configuration
@@ -33,9 +34,9 @@ public class ObjectMapperConfiguration
         ObjectMapper mapper = new ObjectMapper()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .registerModule(module)
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
         mapper.configOverride(java.util.Date.class)
                 .setFormat(JsonFormat.Value.forPattern("dd-MM-yyyy"));
