@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,100 +34,79 @@ public class CompanyControllerTest
     @MockBean
     private CompanyService service;
 
+    private final List<Company> testCompanyList = Arrays.asList(
+            new Company("company1", "taxId1", "addr1", "repr1"),
+            new Company("company2", "taxId2", "addr2", "repr2"),
+            new Company("company3", "taxId3", "addr3", "repr3")
+    );
+
+    private final Company testNewCompany = new Company("company4", "taxId4", "addr4", "repr4");
+
     @Test
     public void getAllCompanies() throws Exception
     {
-        when(service.getAllCompanies()).thenReturn(Arrays.asList(
-                new Company("company1", "taxId1", "addr1", "repr1"),
-                new Company("company2", "taxId2", "addr2", "repr2"),
-                new Company("company3", "taxId3", "addr3", "repr3")
-        ));
+        when(service.getAllCompanies()).thenReturn(testCompanyList);
 
         mockMvc.perform(get("/companies"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder("company1", "company2", "company3")))
-                .andExpect(jsonPath("$[*].taxId", containsInAnyOrder("taxId1", "taxId2", "taxId3")))
-                .andExpect(jsonPath("$[*].address", containsInAnyOrder("addr1", "addr2", "addr3")));
+                .andExpect(jsonPath("$[*].name", containsInAnyOrder(testCompanyList.get(0).getName(), testCompanyList.get(1).getName(), testCompanyList.get(2).getName())))
+                .andExpect(jsonPath("$[*].taxId", containsInAnyOrder(testCompanyList.get(0).getTaxId(), testCompanyList.get(1).getTaxId(), testCompanyList.get(2).getTaxId())))
+                .andExpect(jsonPath("$[*].address", containsInAnyOrder(testCompanyList.get(0).getAddress(), testCompanyList.get(1).getAddress(), testCompanyList.get(2).getAddress())));
 
         mockMvc.perform(get("/companies"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json("[ {\n" +
-                        "  \"name\" : \"company1\",\n" +
-                        "  \"taxId\" : \"taxId1\",\n" +
-                        "  \"address\" : \"addr1\",\n" +
-                        "  \"representative\" : \"repr1\"\n" +
-                        "}, {\n" +
-                        "  \"name\" : \"company2\",\n" +
-                        "  \"taxId\" : \"taxId2\",\n" +
-                        "  \"address\" : \"addr2\",\n" +
-                        "  \"representative\" : \"repr2\"\n" +
-                        "}, {\n" +
-                        "  \"name\" : \"company3\",\n" +
-                        "  \"taxId\" : \"taxId3\",\n" +
-                        "  \"address\" : \"addr3\",\n" +
-                        "  \"representative\" : \"repr3\"\n" +
-                        "} ]"));
+                .andExpect(content().json(JSONParser.fromObjectListToJsonString(testCompanyList)));
     }
 
     @Test
     public void getCompanyByName() throws Exception, InvalidInputException, EntityNotFoundException
     {
-        when(service.getCompany("taxId2")).thenReturn(new Company("company2", "taxId2", "addr2", "repr2"));
+        Company companyForTest = testCompanyList.get(1);
+        when(service.getCompany(companyForTest.getTaxId())).thenReturn(testCompanyList.get(1));
 
-        mockMvc.perform(get("/companies/taxId2"))
+        mockMvc.perform(get("/companies/" + companyForTest.getTaxId()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("company2")))
-                .andExpect(jsonPath("$.taxId", is("taxId2")))
-                .andExpect(jsonPath("$.address", is("addr2")));
+                .andExpect(jsonPath("$.name", is(companyForTest.getName())))
+                .andExpect(jsonPath("$.taxId", is(companyForTest.getTaxId())))
+                .andExpect(jsonPath("$.address", is(companyForTest.getAddress())));
     }
 
     @Test
     public void addCompany() throws InvalidInputException, Exception
     {
-        Company newCompany = new Company("company5", "taxId5", "addr5", "repr5");
-        when(service.addCompany(Mockito.any(Company.class))).thenReturn(newCompany.getTaxId());
+        when(service.addCompany(Mockito.any(Company.class))).thenReturn(testNewCompany.getTaxId());
 
         mockMvc.perform(put("/companies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "\"name\": \"company5\",\n" +
-                                "\"taxId\": \"tax5\",\n" +
-                                "\"address\": \"addr5\",\n" +
-                                "\"representative\": \"repr5\"\n" +
-                                "}"))
+                        .content(JSONParser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(newCompany.getTaxId())));
+                .andExpect(content().string(containsString(testNewCompany.getTaxId())));
     }
 
     @Test
     void updateCompany() throws InvalidInputException, Exception
     {
-        Company newCompany = new Company("company7", "taxId7", "addr7", "repr7");
-        when(service.updateCompany(eq(newCompany.getTaxId()), Mockito.any(Company.class))).thenReturn(newCompany.getTaxId());
+        when(service.updateCompany(eq(testNewCompany.getTaxId()), Mockito.any(Company.class))).thenReturn(testNewCompany.getTaxId());
 
-        mockMvc.perform(post("/companies/taxId7")
+        mockMvc.perform(post("/companies/" + testNewCompany.getTaxId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "\"name\": \"company7\",\n" +
-                                "\"taxId\": \"taxId7\",\n" +
-                                "\"address\": \"addr7\",\n" +
-                                "\"representative\": \"repr7\"\n" +
-                                "}"))
+                        .content(JSONParser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(newCompany.getTaxId())));
+                .andExpect(content().string(containsString(testNewCompany.getTaxId())));
     }
 
     @Test
     void deleteCompany() throws ApiException, Exception
     {
-        doThrow(new EntityNotFoundException()).when(service).deleteCompany("taxId9999");
+        final String fakeTaxId = "taxId9999";
+        doThrow(new EntityNotFoundException()).when(service).deleteCompany(fakeTaxId);
 
-        mockMvc.perform(delete("/companies/taxId9999"))
+        mockMvc.perform(delete("/companies/" + fakeTaxId))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }

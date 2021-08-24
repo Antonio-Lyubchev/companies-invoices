@@ -78,7 +78,7 @@ public class InvoiceController
     @PostMapping(path = "/invoices", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addInvoice(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
-        List<Invoice> invoices = JSONParser.parseList(file.getBytes(), Invoice.class);
+        List<Invoice> invoices = JSONParser.fromJsonToList(file.getBytes(), Invoice.class);
 
         invoiceService.addInvoices(invoices);
     }

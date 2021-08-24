@@ -56,7 +56,7 @@ public class CompanyController
     @PostMapping(path = "/companies", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addCompany(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
-        List<Company> companies = JSONParser.parseList(file.getBytes(), Company.class);
+        List<Company> companies = JSONParser.fromJsonToList(file.getBytes(), Company.class);
 
         companyService.addCompanies(companies);
     }
