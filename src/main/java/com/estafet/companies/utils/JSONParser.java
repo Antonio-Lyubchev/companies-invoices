@@ -12,28 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Custom JSON parser util class, when injected it will use a preconfigured Object mapper.
+ * Custom JSON parser util class, uses a preconfigured Object mapper.
+ *
  * @see ObjectMapperConfiguration#objectMapper()
  */
 @Configuration
 public class JSONParser
 {
-    private final ObjectMapper objectMapper;
+    private static ObjectMapper objectMapper;
 
-    public JSONParser(ObjectMapper objectMapper)
-    {
-        this.objectMapper = objectMapper;
-    }
+    public JSONParser(ObjectMapper objectMapper) { JSONParser.objectMapper = objectMapper;}
 
-    public <T> T parseString(String jsonContents, Class<T> className) throws IOException
+    public static <T> T parseString(String jsonContents, Class<T> className) throws IOException
     {
         JsonFactory factory = new JsonFactory();
-        factory.setCodec(this.objectMapper);
+        factory.setCodec(objectMapper);
         JsonParser parser = factory.createParser(jsonContents);
         return parser.readValueAs(className);
     }
 
-    public <T> List<T> parseList(byte[] jsonContents, Class<T> className) throws IOException
+    public static <T> List<T> parseList(byte[] jsonContents, Class<T> className) throws IOException
     {
         TypeFactory t = TypeFactory.defaultInstance();
 

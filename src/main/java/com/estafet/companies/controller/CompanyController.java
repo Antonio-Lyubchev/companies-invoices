@@ -17,12 +17,10 @@ import java.util.List;
 public class CompanyController
 {
     private final CompanyService companyService;
-    private final JSONParser jsonParser;
 
-    CompanyController(CompanyService companyService, JSONParser jsonParser)
+    CompanyController(CompanyService companyService)
     {
         this.companyService = companyService;
-        this.jsonParser = jsonParser;
     }
 
     @GetMapping("/companies")
@@ -58,7 +56,7 @@ public class CompanyController
     @PostMapping(path = "/companies", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addCompany(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
-        List<Company> companies = jsonParser.parseList(file.getBytes(), Company.class);
+        List<Company> companies = JSONParser.parseList(file.getBytes(), Company.class);
 
         companyService.addCompanies(companies);
     }

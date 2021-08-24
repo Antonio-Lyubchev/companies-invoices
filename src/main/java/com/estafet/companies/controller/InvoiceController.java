@@ -20,13 +20,11 @@ public class InvoiceController
 {
     private final InvoiceService invoiceService;
     private final CompanyService companyService;
-    private final JSONParser jsonParser;
 
-    InvoiceController(InvoiceService invoiceService, CompanyService companyService, JSONParser jsonParser)
+    InvoiceController(InvoiceService invoiceService, CompanyService companyService)
     {
         this.invoiceService = invoiceService;
         this.companyService = companyService;
-        this.jsonParser = jsonParser;
     }
 
     @GetMapping("/invoices")
@@ -80,7 +78,7 @@ public class InvoiceController
     @PostMapping(path = "/invoices", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addInvoice(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
-        List<Invoice> invoices = jsonParser.parseList(file.getBytes(), Invoice.class);
+        List<Invoice> invoices = JSONParser.parseList(file.getBytes(), Invoice.class);
 
         invoiceService.addInvoices(invoices);
     }

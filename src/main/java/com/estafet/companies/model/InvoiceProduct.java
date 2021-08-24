@@ -1,10 +1,13 @@
 package com.estafet.companies.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 
 /**
  * This class represents a single invoice product, including the product quantity.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InvoiceProduct
 {
     private String name;

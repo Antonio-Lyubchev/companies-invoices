@@ -33,10 +33,6 @@ public class CompanyControllerTest
     @MockBean
     private CompanyService service;
 
-    @MockBean
-    // The service needs this parser instantiated
-    private JSONParser parser;
-
     @Test
     public void getAllCompanies() throws Exception
     {
