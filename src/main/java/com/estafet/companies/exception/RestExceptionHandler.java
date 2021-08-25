@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -29,6 +30,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex)
     {
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
@@ -37,6 +39,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(InvalidInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleInvalidInput(InvalidInputException ex)
     {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
@@ -45,6 +48,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     @ExceptionHandler(ApiException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleApiException(ApiException ex)
     {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
