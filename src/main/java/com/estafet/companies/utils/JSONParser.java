@@ -7,7 +7,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.context.annotation.Scope;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,17 +22,13 @@ import java.util.List;
  * @see ObjectMapperConfiguration#objectMapper()
  */
 @JsonComponent
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class JSONParser
 {
-    private static ObjectMapper objectMapper;
-
     @Autowired
-    private JSONParser(ObjectMapper objectMapper)
-    {
-        JSONParser.objectMapper = objectMapper;
-    }
+    private ObjectMapper objectMapper;
 
-    public static <T> T fromJsonToObject(String jsonContents, Class<T> className) throws IOException
+    public <T> T fromJsonToObject(String jsonContents, Class<T> className) throws IOException
     {
         JsonFactory factory = new JsonFactory();
         factory.setCodec(objectMapper);
@@ -38,14 +36,14 @@ public class JSONParser
         return parser.readValueAs(className);
     }
 
-    public static <T> List<T> fromJsonToList(byte[] jsonContents, Class<T> className) throws IOException
+    public <T> List<T> fromJsonToList(byte[] jsonContents, Class<T> className) throws IOException
     {
         TypeFactory t = TypeFactory.defaultInstance();
 
         return objectMapper.readValue(jsonContents, t.constructCollectionType(ArrayList.class, className));
     }
 
-    public static String fromObjectToJsonString(Object obj)
+    public String fromObjectToJsonString(Object obj)
     {
         try
         {
@@ -56,7 +54,7 @@ public class JSONParser
         }
     }
 
-    public static <T> String fromObjectListToJsonString(List<T> objectList)
+    public <T> String fromObjectListToJsonString(List<T> objectList)
     {
         try
         {
@@ -65,5 +63,16 @@ public class JSONParser
         {
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * Setter in case we are using the mapper out of Spring context
+     *
+     * @param objectMapper preferably instantiated from the preconfigured {@link com.estafet.companies.configuration.ObjectMapperConfiguration}
+     */
+    public void setObjectMapper(ObjectMapper objectMapper)
+    {
+        this.objectMapper = objectMapper;
     }
 }

@@ -4,13 +4,10 @@ import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Invoice;
-import com.estafet.companies.model.InvoiceProduct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,22 +19,15 @@ public class InvoiceService
     private final CompanyService companyService;
     private final List<Invoice> invoiceList;
 
-    private AtomicInteger invoiceCounter;
+    private final AtomicInteger invoiceCounter;
 
+    @Autowired
     public InvoiceService(CompanyService companyService)
     {
         this.companyService = companyService;
 
-        List<InvoiceProduct> sampleProducts = new ArrayList<>();
-        sampleProducts.add(new InvoiceProduct("product1", new BigDecimal("3.14"), 10));
-        sampleProducts.add(new InvoiceProduct("product2", new BigDecimal("15.32"), 2));
-        sampleProducts.add(new InvoiceProduct("product3", new BigDecimal("150"), 6));
-
-        invoiceList = new ArrayList<>(Arrays.asList(
-                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "tax1", sampleProducts),
-                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "tax2", sampleProducts),
-                new Invoice(LocalDateTime.now(), LocalDateTime.now().plusDays(30), "tax3", sampleProducts)
-        ));
+        invoiceList = new ArrayList<>();
+        invoiceCounter = new AtomicInteger();
     }
 
     public Invoice getInvoice(int invoiceNumber) throws EntityNotFoundException, InvalidInputException

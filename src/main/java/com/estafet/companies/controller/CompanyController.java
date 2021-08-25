@@ -6,6 +6,7 @@ import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.utils.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,10 +18,13 @@ import java.util.List;
 public class CompanyController
 {
     private final CompanyService companyService;
+    private final JSONParser parser;
 
-    CompanyController(CompanyService companyService)
+    @Autowired
+    CompanyController(CompanyService companyService, JSONParser parser)
     {
         this.companyService = companyService;
+        this.parser = parser;
     }
 
     @GetMapping("/companies")
@@ -56,7 +60,7 @@ public class CompanyController
     @PostMapping(path = "/companies", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addCompany(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
-        List<Company> companies = JSONParser.fromJsonToList(file.getBytes(), Company.class);
+        List<Company> companies = parser.fromJsonToList(file.getBytes(), Company.class);
 
         companyService.addCompanies(companies);
     }

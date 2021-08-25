@@ -13,11 +13,12 @@ import java.util.stream.IntStream;
 @Service
 public class CompanyService
 {
-    private final List<Company> companyList = new ArrayList<>(Arrays.asList(
-            new Company("company1", "taxId1", "addr1", "repr1"),
-            new Company("company2", "taxId2", "addr2", "repr2"),
-            new Company("company3", "taxId3", "addr3", "repr3"))
-    );
+    private final List<Company> companyList;
+
+    public CompanyService()
+    {
+        companyList = new ArrayList<>();
+    }
 
     public Company getCompany(String taxId) throws EntityNotFoundException, InvalidInputException
     {

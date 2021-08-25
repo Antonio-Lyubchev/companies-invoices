@@ -1,0 +1,16 @@
+[ {
+  "name" : "company1",
+  "taxId" : "taxId1",
+  "address" : "addr1",
+  "representative" : "repr1"
+}, {
+  "name" : "company2",
+  "taxId" : "taxId2",
+  "address" : "addr2",
+  "representative" : "repr2"
+}, {
+  "name" : "company3",
+  "taxId" : "taxId3",
+  "address" : "addr3",
+  "representative" : "repr3"
+} ]

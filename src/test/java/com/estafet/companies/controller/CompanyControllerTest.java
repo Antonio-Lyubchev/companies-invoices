@@ -6,15 +6,19 @@ import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.utils.JSONParser;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -25,22 +29,30 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WebMvcTest(CompanyController.class)
 public class CompanyControllerTest
 {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private JSONParser parser;
 
     @MockBean
     private CompanyService service;
 
-    private final List<Company> testCompanyList = Arrays.asList(
-            new Company("company1", "taxId1", "addr1", "repr1"),
-            new Company("company2", "taxId2", "addr2", "repr2"),
-            new Company("company3", "taxId3", "addr3", "repr3")
-    );
+    private List<Company> testCompanyList;
+    private Company testNewCompany;
 
-    private final Company testNewCompany = new Company("company4", "taxId4", "addr4", "repr4");
+    @BeforeAll
+    public void setup() throws IOException
+    {
+        Resource companiesJsonFileResource = new ClassPathResource("JSON/AddCompanies.json");
+        byte[] companiesByteArray = companiesJsonFileResource.getInputStream().readAllBytes();
+        testCompanyList = parser.fromJsonToList(companiesByteArray, Company.class);
+
+        testNewCompany = new Company("company4", "taxId4", "addr4", "repr4");
+    }
 
     @Test
     public void getAllCompanies() throws Exception
@@ -57,7 +69,7 @@ public class CompanyControllerTest
         mockMvc.perform(get("/companies"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(JSONParser.fromObjectListToJsonString(testCompanyList)));
+                .andExpect(content().json(parser.fromObjectListToJsonString(testCompanyList)));
     }
 
     @Test
@@ -81,7 +93,7 @@ public class CompanyControllerTest
 
         mockMvc.perform(put("/companies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(JSONParser.fromObjectToJsonString(testNewCompany)))
+                        .content(parser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(testNewCompany.getTaxId())));
@@ -94,7 +106,7 @@ public class CompanyControllerTest
 
         mockMvc.perform(post("/companies/" + testNewCompany.getTaxId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(JSONParser.fromObjectToJsonString(testNewCompany)))
+                        .content(parser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(testNewCompany.getTaxId())));

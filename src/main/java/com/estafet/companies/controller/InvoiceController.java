@@ -8,6 +8,7 @@ import com.estafet.companies.model.InvoiceRequest;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.service.InvoiceService;
 import com.estafet.companies.utils.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,11 +21,14 @@ public class InvoiceController
 {
     private final InvoiceService invoiceService;
     private final CompanyService companyService;
+    private final JSONParser parser;
 
-    InvoiceController(InvoiceService invoiceService, CompanyService companyService)
+    @Autowired
+    InvoiceController(InvoiceService invoiceService, CompanyService companyService, JSONParser parser)
     {
         this.invoiceService = invoiceService;
         this.companyService = companyService;
+        this.parser = parser;
     }
 
     @GetMapping("/invoices")
@@ -76,7 +80,7 @@ public class InvoiceController
     @PostMapping(path = "/invoices", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void addInvoice(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
-        List<Invoice> invoices = JSONParser.fromJsonToList(file.getBytes(), Invoice.class);
+        List<Invoice> invoices = parser.fromJsonToList(file.getBytes(), Invoice.class);
 
         invoiceService.addInvoices(invoices);
     }

@@ -1,24 +1,26 @@
 package com.estafet.companies.controller;
 
+import com.estafet.companies.configuration.ObjectMapperConfiguration;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Invoice;
-import com.estafet.companies.model.InvoiceProduct;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.service.InvoiceService;
 import com.estafet.companies.utils.JSONParser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -29,40 +31,35 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WebMvcTest(InvoiceController.class)
 public class InvoiceControllerTest
 {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private JSONParser parser;
 
     @MockBean
     private InvoiceService invoiceService;
     @MockBean
     private CompanyService companyService;
 
-    private static List<Invoice> testInvoiceList;
-
-    private static Invoice testNewInvoice;
+    private List<Invoice> testInvoiceList;
+    private Invoice testNewInvoice;
 
     @BeforeAll
-    public static void setup()
+    public void setup() throws IOException
     {
-        List<InvoiceProduct> testSampleProducts = Arrays.asList(
-                new InvoiceProduct("product1", new BigDecimal("3.14"), 10),
-                new InvoiceProduct("product2", new BigDecimal("15.32"), 2),
-                new InvoiceProduct("product3", new BigDecimal("150"), 6)
-        );
+        Resource invoicesJsonFileResource = new ClassPathResource("JSON/AddInvoices.json");
+        byte[] invoicesByteArray = invoicesJsonFileResource.getInputStream().readAllBytes();
 
-        // Cut off nanoseconds
-        final LocalDateTime testLocalDateTime = LocalDateTime.now().withNano(0);
+        // New parser before context initializes the one for the class
+        JSONParser parser = new JSONParser();
+        parser.setObjectMapper(new ObjectMapperConfiguration().objectMapper());
+        testInvoiceList = parser.fromJsonToList(invoicesByteArray, Invoice.class);
 
-        testInvoiceList = Arrays.asList(
-                new Invoice(testLocalDateTime, testLocalDateTime.plusDays(30), "tax1", testSampleProducts),
-                new Invoice(testLocalDateTime, testLocalDateTime.plusDays(30), "tax2", testSampleProducts),
-                new Invoice(testLocalDateTime, testLocalDateTime.plusDays(30), "tax3", testSampleProducts)
-        );
-
-        testNewInvoice = new Invoice(testLocalDateTime, testLocalDateTime.plusDays(30), "tax4", testSampleProducts);
+        testNewInvoice = new Invoice(testInvoiceList.get(0).getDateIssued(), testInvoiceList.get(0).getDateDue(), "tax4", testInvoiceList.get(0).getProducts());
     }
 
     @Test
@@ -73,18 +70,22 @@ public class InvoiceControllerTest
         ResultActions result = mockMvc.perform(get("/invoices"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].dateIssued", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getDateIssued).map(LocalDateTime::toString).toArray())))
-                .andExpect(jsonPath("$[*].dateDue", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getDateDue).map(LocalDateTime::toString).toArray())))
+                .andExpect(jsonPath("$[*].dateIssued", containsInAnyOrder(testInvoiceList.stream()
+                        .map(Invoice::getDateIssued)
+                        .map(d -> d.format(DateTimeFormatter.ISO_DATE_TIME)).toArray())))
+                .andExpect(jsonPath("$[*].dateDue", containsInAnyOrder(testInvoiceList.stream()
+                        .map(Invoice::getDateDue)
+                        .map(d -> d.format(DateTimeFormatter.ISO_DATE_TIME)).toArray())))
                 .andExpect(jsonPath("$[*].invoiceId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getInvoiceId).toArray())))
                 .andExpect(jsonPath("$[*].companyTaxId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getCompanyTaxId).toArray())));
 
         // Test entire response (including products)
-        assertEquals(result.andReturn().getResponse().getContentAsString(), JSONParser.fromObjectListToJsonString(testInvoiceList));
+        assertEquals(result.andReturn().getResponse().getContentAsString(), parser.fromObjectListToJsonString(testInvoiceList));
 
         mockMvc.perform(get("/invoices"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(JSONParser.fromObjectListToJsonString(testInvoiceList)));
+                .andExpect(content().json(parser.fromObjectListToJsonString(testInvoiceList)));
     }
 
     @Test
@@ -96,13 +97,13 @@ public class InvoiceControllerTest
         ResultActions result = mockMvc.perform(get("/invoices/" + invoiceForTest.getInvoiceId()));
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.dateIssued", is(invoiceForTest.getDateIssued().toString())))
-                .andExpect(jsonPath("$.dateDue", is(invoiceForTest.getDateDue().toString())))
+                .andExpect(jsonPath("$.dateIssued", is(invoiceForTest.getDateIssued().format(DateTimeFormatter.ISO_DATE_TIME))))
+                .andExpect(jsonPath("$.dateDue", is(invoiceForTest.getDateDue().format(DateTimeFormatter.ISO_DATE_TIME))))
                 .andExpect(jsonPath("$.invoiceId", is(invoiceForTest.getInvoiceId())))
                 .andExpect(jsonPath("$.companyTaxId", is(invoiceForTest.getCompanyTaxId())));
 
         // Test entire response (including products)
-        assertEquals(result.andReturn().getResponse().getContentAsString(), JSONParser.fromObjectToJsonString(invoiceForTest));
+        assertEquals(result.andReturn().getResponse().getContentAsString(), parser.fromObjectToJsonString(invoiceForTest));
     }
 
     @Test
