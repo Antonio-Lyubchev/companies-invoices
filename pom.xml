@@ -41,6 +41,13 @@
 			<version>2.12.4</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.5.10</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -49,6 +56,25 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${project.parent.version}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-maven-plugin</artifactId>
+				<version>0.2</version>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<apiDocsUrl>http://localhost:8080/api-docs</apiDocsUrl>
+					<outputFileName>openapi.json</outputFileName>
+					<outputDir>${project.build.directory}</outputDir>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
