@@ -1,5 +1,6 @@
 package com.estafet.companies.controller;
 
+import com.estafet.companies.configuration.ModelMapperConfiguration;
 import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
@@ -13,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -23,15 +25,15 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(ModelMapperConfiguration.class)
 @WebMvcTest(CompanyController.class)
-public class CompanyControllerTest
+public class CompanyControllerIT
 {
     @Autowired
     private MockMvc mockMvc;
@@ -102,14 +104,13 @@ public class CompanyControllerTest
     @Test
     void updateCompany() throws InvalidInputException, Exception
     {
-        when(service.updateCompany(eq(testNewCompany.getTaxId()), Mockito.any(Company.class))).thenReturn(testNewCompany.getTaxId());
+        doNothing().when(service).updateCompany(eq(testNewCompany.getTaxId()), Mockito.any(Company.class));
 
         mockMvc.perform(post("/companies/" + testNewCompany.getTaxId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(parser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString(testNewCompany.getTaxId())));
+                .andExpect(status().isOk());
     }
 
     @Test

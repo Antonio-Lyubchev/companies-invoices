@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WebMvcTest(InvoiceController.class)
-public class InvoiceControllerTest
+public class InvoiceControllerIT
 {
     @Autowired
     private MockMvc mockMvc;

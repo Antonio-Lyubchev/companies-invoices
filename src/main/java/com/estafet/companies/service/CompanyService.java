@@ -62,7 +62,7 @@ public class CompanyService
         }
     }
 
-    public String updateCompany(String taxId, Company newCompany) throws InvalidInputException
+    public void updateCompany(String taxId, Company newCompany) throws InvalidInputException
     {
         if (!StringUtils.hasText(taxId))
         {
@@ -86,8 +86,6 @@ public class CompanyService
         {
             companyList.add(newCompany);
         }
-
-        return newCompany.getTaxId();
     }
 
     public void deleteCompany(String taxId) throws ApiException
