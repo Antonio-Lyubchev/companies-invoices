@@ -1,9 +1,6 @@
 package com.estafet.companies.controller;
 
 import com.estafet.companies.dto.InvoiceDto;
-import com.estafet.companies.exception.ApiException;
-import com.estafet.companies.exception.EntityNotFoundException;
-import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.service.CompanyService;
@@ -44,33 +41,34 @@ public class InvoiceController
     }
 
     @GetMapping("/invoices/{id}")
-    public InvoiceDto getInvoiceById(@PathVariable("id") int invoiceId) throws EntityNotFoundException
+    public InvoiceDto getInvoiceById(@PathVariable("id") long invoiceId)
     {
         return modelMapperUtils.convertToDto(invoiceService.getInvoice(invoiceId));
     }
 
     @PutMapping("/invoices")
-    public int addInvoice(@RequestBody InvoiceDto invoiceDto) throws InvalidInputException
+    public long addInvoice(@RequestBody InvoiceDto invoiceDto)
     {
+        //TODO: call controller?
         Invoice invoice = modelMapperUtils.convertToEntity(invoiceDto);
         registerCustomer(invoiceDto);
         return invoiceService.addInvoice(invoice);
     }
 
     @PostMapping("/invoices/{id}")
-    public void updateInvoice(@PathVariable("id") int invoiceId, @RequestBody InvoiceDto invoiceDto) throws InvalidInputException
+    public void updateInvoice(@PathVariable("id") long invoiceId, @RequestBody InvoiceDto invoiceDto)
     {
         invoiceService.updateInvoice(invoiceId, modelMapperUtils.convertToEntity(invoiceDto));
     }
 
     @DeleteMapping("/invoices/{id}")
-    public void deleteInvoice(@PathVariable("id") int invoiceId) throws ApiException
+    public void deleteInvoice(@PathVariable("id") long invoiceId)
     {
         invoiceService.deleteInvoice(invoiceId);
     }
 
     @PostMapping(path = "/invoices", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void addInvoice(@RequestPart MultipartFile file) throws IOException, InvalidInputException
+    public void addInvoice(@RequestPart MultipartFile file) throws IOException
     {
         List<InvoiceDto> invoiceDtoList = parser.fromJsonToList(file.getBytes(), InvoiceDto.class);
 
@@ -80,7 +78,7 @@ public class InvoiceController
     }
 
 
-    private String registerCustomer(InvoiceDto invoiceDto) throws InvalidInputException
+    private String registerCustomer(InvoiceDto invoiceDto)
     {
         Company companyToRegister = modelMapperUtils.convertToEntity(invoiceDto.getCompanyDto());
         return companyService.addCompany(companyToRegister);

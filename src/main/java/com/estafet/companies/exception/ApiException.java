@@ -1,6 +1,6 @@
 package com.estafet.companies.exception;
 
-public class ApiException extends Throwable
+public class ApiException extends RuntimeException
 {
     public ApiException()
     {

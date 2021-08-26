@@ -48,4 +48,14 @@ public class ModelMapperUtils
     {
         return modelMapper.map(invoiceDto, Invoice.class);
     }
+
+    /**
+     * Setter in case we are using the mapper out of Spring context
+     *
+     * @param modelMapper preferably instantiated from the preconfigured {@link com.estafet.companies.configuration.ModelMapperConfiguration}
+     */
+    public void setModelMapper(ModelMapper modelMapper)
+    {
+        this.modelMapper = modelMapper;
+    }
 }

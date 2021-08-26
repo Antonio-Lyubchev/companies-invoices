@@ -1,22 +1,44 @@
 package com.estafet.companies.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
+@Entity
 public class Company
 {
+    @Id
+    @NotNull
+    @Column(name = "taxId", nullable = false)
+    private String taxNumber;
+    @NotNull
     private String name;
-    private String taxId;
+    @NotNull
     private String address;
+    @NotNull
     private String representative;
 
     public Company()
     {
     }
 
-    public Company(String name, String taxId, String address, String representative)
+    public Company(String taxNumber, String name, String address, String representative)
     {
+        this.taxNumber = taxNumber;
         this.name = name;
-        this.taxId = taxId;
         this.address = address;
         this.representative = representative;
+    }
+
+    public String getTaxNumber()
+    {
+        return taxNumber;
+    }
+
+    public void setTaxNumber(String taxNumber)
+    {
+        this.taxNumber = taxNumber;
     }
 
     public String getName()
@@ -27,16 +49,6 @@ public class Company
     public void setName(String name)
     {
         this.name = name;
-    }
-
-    public String getTaxId()
-    {
-        return taxId;
-    }
-
-    public void setTaxId(String taxId)
-    {
-        this.taxId = taxId;
     }
 
     public String getAddress()
@@ -58,6 +70,4 @@ public class Company
     {
         this.representative = representative;
     }
-
-
 }

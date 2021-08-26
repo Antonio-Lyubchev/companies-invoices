@@ -1,8 +1,6 @@
 package com.estafet.companies.controller;
 
 import com.estafet.companies.dto.CompanyDto;
-import com.estafet.companies.exception.ApiException;
-import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
@@ -40,26 +38,26 @@ public class CompanyController
     }
 
     @GetMapping("/companies/{id}")
-    public CompanyDto getCompanyByName(@PathVariable("id") String taxId) throws EntityNotFoundException, InvalidInputException
+    public CompanyDto getCompanyByName(@PathVariable("id") String taxId)
     {
         return modelMapperUtils.convertToDto(companyService.getCompany(taxId));
     }
 
     @PutMapping("/companies")
-    public String addCompany(@RequestBody CompanyDto companyDto) throws InvalidInputException
+    public String addCompany(@RequestBody CompanyDto companyDto)
     {
         Company company = modelMapperUtils.convertToEntity(companyDto);
         return companyService.addCompany(company);
     }
 
     @PostMapping("/companies/{id}")
-    public void updateCompany(@PathVariable("id") String taxId, @RequestBody CompanyDto companyDto) throws InvalidInputException
+    public void updateCompany(@PathVariable("id") String taxId, @RequestBody CompanyDto companyDto)
     {
         companyService.updateCompany(taxId, modelMapperUtils.convertToEntity(companyDto));
     }
 
     @DeleteMapping("/companies/{id}")
-    public void deleteCompany(@PathVariable("id") String taxId) throws ApiException
+    public void deleteCompany(@PathVariable("id") String taxId)
     {
         companyService.deleteCompany(taxId);
     }

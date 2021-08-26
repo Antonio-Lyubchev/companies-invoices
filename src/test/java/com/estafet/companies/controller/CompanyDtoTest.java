@@ -18,7 +18,7 @@ public class CompanyDtoTest
 
         CompanyDto companyDto = modelMapper.map(company, CompanyDto.class);
 
-        assertEquals(company.getTaxId(), companyDto.getTaxId());
+        assertEquals(company.getTaxNumber(), companyDto.getTaxNumber());
         assertEquals(company.getAddress(), companyDto.getAddress());
         assertEquals(company.getName(), companyDto.getName());
         assertEquals(company.getRepresentative(), companyDto.getRepresentative());
@@ -31,7 +31,7 @@ public class CompanyDtoTest
 
         Company company = modelMapper.map(companyDto, Company.class);
 
-        assertEquals(companyDto.getTaxId(), company.getTaxId());
+        assertEquals(companyDto.getTaxNumber(), company.getTaxNumber());
         assertEquals(companyDto.getAddress(), company.getAddress());
         assertEquals(companyDto.getName(), company.getName());
         assertEquals(companyDto.getRepresentative(), company.getRepresentative());

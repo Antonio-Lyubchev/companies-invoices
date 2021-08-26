@@ -1,21 +1,34 @@
 package com.estafet.companies.model;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
 public class Invoice
 {
+    @Id
+    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @NotNull
     private LocalDateTime dateIssued;
+    @NotNull
     private LocalDateTime dateDue;
-    private int invoiceId;
+    @NotNull
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "company_id")
     private Company company;
-    private List<InvoiceProduct> products;
+    @NotNull
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Product> products;
 
     public Invoice()
     {
     }
 
-    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, Company company, List<InvoiceProduct> products)
+    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, Company company, List<Product> products)
     {
         this.dateIssued = dateIssued;
         this.dateDue = dateDue;
@@ -43,14 +56,14 @@ public class Invoice
         this.dateDue = dateDue;
     }
 
-    public int getInvoiceId()
+    public long getInvoiceId()
     {
-        return invoiceId;
+        return id;
     }
 
-    public void setInvoiceId(int invoiceId)
+    public void setInvoiceId(long id)
     {
-        this.invoiceId = invoiceId;
+        this.id = id;
     }
 
     public Company getCompany()
@@ -63,12 +76,12 @@ public class Invoice
         this.company = company;
     }
 
-    public List<InvoiceProduct> getProducts()
+    public List<Product> getProducts()
     {
         return products;
     }
 
-    public void setProducts(List<InvoiceProduct> products)
+    public void setProducts(List<Product> products)
     {
         this.products = products;
     }

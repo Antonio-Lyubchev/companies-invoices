@@ -3,7 +3,7 @@
   "dateDue" : "24-09-2021 11:16:00",
   "company": {
 	"name" : "company1",
-	"taxId" : "taxId1",
+	"taxNumber" : "taxId1",
 	"address" : "addr1",
 	"representative" : "repr1"
   },
@@ -28,7 +28,7 @@
   "dateDue" : "24-09-2021 11:16:00",
   "company": {
 	"name" : "company2",
-	"taxId" : "taxId2",
+	"taxNumber" : "taxId2",
 	"address" : "addr2",
 	"representative" : "repr2"
   },
@@ -53,7 +53,7 @@
   "dateDue" : "24-09-2021 11:16:40",
   "company": {
 	"name" : "company3",
-	"taxId" : "taxId3",
+	"taxNumber" : "taxId3",
 	"address" : "addr3",
 	"representative" : "repr3"
   },

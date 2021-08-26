@@ -1,7 +1,6 @@
 package com.estafet.companies.controller;
 
 import com.estafet.companies.configuration.ObjectMapperConfiguration;
-import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.service.CompanyService;
@@ -93,7 +92,7 @@ public class InvoiceControllerIT
     }
 
     @Test
-    void getInvoiceById() throws EntityNotFoundException, Exception
+    void getInvoiceById() throws Exception
     {
         Invoice invoiceForTest = testInvoiceList.get(1);
         when(invoiceService.getInvoice(invoiceForTest.getInvoiceId())).thenReturn(invoiceForTest);
@@ -104,7 +103,7 @@ public class InvoiceControllerIT
                 .andExpect(jsonPath("$.dateIssued", is(invoiceForTest.getDateIssued().format(DateTimeFormatter.ISO_DATE_TIME))))
                 .andExpect(jsonPath("$.dateDue", is(invoiceForTest.getDateDue().format(DateTimeFormatter.ISO_DATE_TIME))))
                 .andExpect(jsonPath("$.company.name", is(invoiceForTest.getCompany().getName())))
-                .andExpect(jsonPath("$.company.taxId", is(invoiceForTest.getCompany().getTaxId())))
+                .andExpect(jsonPath("$.company.taxId", is(invoiceForTest.getCompany().getTaxNumber())))
                 .andExpect(jsonPath("$.company.address", is(invoiceForTest.getCompany().getAddress())))
                 .andExpect(jsonPath("$.company.representative", is(invoiceForTest.getCompany().getRepresentative())));
 

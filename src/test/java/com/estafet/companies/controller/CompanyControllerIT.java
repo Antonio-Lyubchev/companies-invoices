@@ -1,8 +1,6 @@
 package com.estafet.companies.controller;
 
-import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
-import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.utils.JSONParser;
@@ -65,7 +63,7 @@ public class CompanyControllerIT
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].name", containsInAnyOrder(testCompanyList.stream().map(Company::getName).toArray())))
-                .andExpect(jsonPath("$[*].taxId", containsInAnyOrder(testCompanyList.stream().map(Company::getTaxId).toArray())))
+                .andExpect(jsonPath("$[*].taxId", containsInAnyOrder(testCompanyList.stream().map(Company::getTaxNumber).toArray())))
                 .andExpect(jsonPath("$[*].address", containsInAnyOrder(testCompanyList.stream().map(Company::getAddress).toArray())));
 
         mockMvc.perform(get("/companies"))
@@ -75,38 +73,38 @@ public class CompanyControllerIT
     }
 
     @Test
-    public void getCompanyByName() throws Exception, InvalidInputException, EntityNotFoundException
+    public void getCompanyByName() throws Exception
     {
         Company companyForTest = testCompanyList.get(1);
-        when(service.getCompany(companyForTest.getTaxId())).thenReturn(companyForTest);
+        when(service.getCompany(companyForTest.getTaxNumber())).thenReturn(companyForTest);
 
-        mockMvc.perform(get("/companies/" + companyForTest.getTaxId()))
+        mockMvc.perform(get("/companies/" + companyForTest.getTaxNumber()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(companyForTest.getName())))
-                .andExpect(jsonPath("$.taxId", is(companyForTest.getTaxId())))
+                .andExpect(jsonPath("$.taxId", is(companyForTest.getTaxNumber())))
                 .andExpect(jsonPath("$.address", is(companyForTest.getAddress())));
     }
 
     @Test
-    public void addCompany() throws InvalidInputException, Exception
+    public void addCompany() throws Exception
     {
-        when(service.addCompany(Mockito.any(Company.class))).thenReturn(testNewCompany.getTaxId());
+        when(service.addCompany(Mockito.any(Company.class))).thenReturn(testNewCompany.getTaxNumber());
 
         mockMvc.perform(put("/companies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(parser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(testNewCompany.getTaxId())));
+                .andExpect(content().string(containsString(testNewCompany.getTaxNumber())));
     }
 
     @Test
-    void updateCompany() throws InvalidInputException, Exception
+    void updateCompany() throws Exception
     {
-        doNothing().when(service).updateCompany(eq(testNewCompany.getTaxId()), Mockito.any(Company.class));
+        doNothing().when(service).updateCompany(eq(testNewCompany.getTaxNumber()), Mockito.any(Company.class));
 
-        mockMvc.perform(post("/companies/" + testNewCompany.getTaxId())
+        mockMvc.perform(post("/companies/" + testNewCompany.getTaxNumber())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(parser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
@@ -114,7 +112,7 @@ public class CompanyControllerIT
     }
 
     @Test
-    void deleteCompany() throws ApiException, Exception
+    void deleteCompany() throws Exception
     {
         final String fakeTaxId = "taxId9999";
         doThrow(new EntityNotFoundException()).when(service).deleteCompany(fakeTaxId);

@@ -2,8 +2,8 @@ package com.estafet.companies.dto;
 
 public class CompanyDto
 {
+    private String taxNumber;
     private String name;
-    private String taxId;
     private String address;
     private String representative;
 
@@ -11,12 +11,22 @@ public class CompanyDto
     {
     }
 
-    public CompanyDto(String name, String taxId, String address, String representative)
+    public CompanyDto(String taxNumber, String name, String address, String representative)
     {
+        this.taxNumber = taxNumber;
         this.name = name;
-        this.taxId = taxId;
         this.address = address;
         this.representative = representative;
+    }
+
+    public String getTaxNumber()
+    {
+        return taxNumber;
+    }
+
+    public void setTaxNumber(String taxNumber)
+    {
+        this.taxNumber = taxNumber;
     }
 
     public String getName()
@@ -27,16 +37,6 @@ public class CompanyDto
     public void setName(String name)
     {
         this.name = name;
-    }
-
-    public String getTaxId()
-    {
-        return taxId;
-    }
-
-    public void setTaxId(String taxId)
-    {
-        this.taxId = taxId;
     }
 
     public String getAddress()
