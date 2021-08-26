@@ -1,12 +1,12 @@
 package com.estafet.companies.controller;
 
-import com.estafet.companies.configuration.ModelMapperConfiguration;
 import com.estafet.companies.exception.ApiException;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.utils.JSONParser;
+import com.estafet.companies.utils.ModelMapperUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Import(ModelMapperConfiguration.class)
+@Import(ModelMapperUtils.class)
 @WebMvcTest(CompanyController.class)
 public class CompanyControllerIT
 {

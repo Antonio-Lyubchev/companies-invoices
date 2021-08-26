@@ -1,25 +1,26 @@
-package com.estafet.companies.model;
+package com.estafet.companies.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-/**
- * This class represents a single invoice product, including the product quantity.
- */
-public class InvoiceProduct
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class InvoiceProductDto
 {
     private String name;
     private BigDecimal price;
     private int productAmount;
 
-    public InvoiceProduct()
+    public InvoiceProductDto()
     {
     }
 
-    public InvoiceProduct(String name, BigDecimal price, int amount)
+    public InvoiceProductDto(String name, BigDecimal price, int productAmount)
     {
         this.name = name;
         this.price = price;
-        this.productAmount = amount;
+        this.productAmount = productAmount;
     }
 
     public String getName()
@@ -50,5 +51,10 @@ public class InvoiceProduct
     public void setProductAmount(int productAmount)
     {
         this.productAmount = productAmount;
+    }
+
+    public BigDecimal getTotalProductPrice()
+    {
+        return price.multiply(BigDecimal.valueOf(productAmount)).setScale(2, RoundingMode.HALF_EVEN);
     }
 }

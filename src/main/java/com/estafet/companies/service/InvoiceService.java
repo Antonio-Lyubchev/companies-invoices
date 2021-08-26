@@ -30,7 +30,7 @@ public class InvoiceService
         invoiceCounter = new AtomicInteger();
     }
 
-    public Invoice getInvoice(int invoiceNumber) throws EntityNotFoundException, InvalidInputException
+    public Invoice getInvoice(int invoiceNumber) throws EntityNotFoundException
     {
         return invoiceList.stream()
                 .filter(c -> c.getInvoiceId() == invoiceNumber)
@@ -45,9 +45,9 @@ public class InvoiceService
             throw new InvalidInputException("Invoice is invalid!");
         }
 
-        if (!companyService.isCompanyExistent(newInvoice.getCompanyTaxId()))
+        if (!companyService.isCompanyExistent(newInvoice.getCompany()))
         {
-            throw new InvalidInputException("Company with tax number '" + newInvoice.getCompanyTaxId() + "' was not found!");
+            throw new InvalidInputException("Company with tax number '" + newInvoice.getCompany() + "' was not found!");
         }
 
         newInvoice.setInvoiceId(getNextUniqueIndex());

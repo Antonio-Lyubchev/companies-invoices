@@ -1,8 +1,12 @@
 [ {
   "dateIssued" : "25-08-2021 11:16:00",
   "dateDue" : "24-09-2021 11:16:00",
-  "invoiceId" : 0,
-  "companyTaxId" : "taxId1",
+  "company": {
+	"name" : "company1",
+	"taxId" : "taxId1",
+	"address" : "addr1",
+	"representative" : "repr1"
+  },
   "products" : [ {
     "name" : "product1",
     "price" : 3.14,
@@ -22,8 +26,12 @@
 }, {
   "dateIssued" : "25-08-2021 11:16:00",
   "dateDue" : "24-09-2021 11:16:00",
-  "invoiceId" : 0,
-  "companyTaxId" : "taxId2",
+  "company": {
+	"name" : "company2",
+	"taxId" : "taxId2",
+	"address" : "addr2",
+	"representative" : "repr2"
+  },
   "products" : [ {
     "name" : "product1",
     "price" : 3.14,
@@ -43,8 +51,12 @@
 }, {
   "dateIssued" : "25-08-2021 11:16:40",
   "dateDue" : "24-09-2021 11:16:40",
-  "invoiceId" : 0,
-  "companyTaxId" : "taxId3",
+  "company": {
+	"name" : "company3",
+	"taxId" : "taxId3",
+	"address" : "addr3",
+	"representative" : "repr3"
+  },
   "products" : [ {
     "name" : "product1",
     "price" : 3.14,

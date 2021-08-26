@@ -7,7 +7,10 @@ import com.estafet.companies.model.Company;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Service
@@ -102,10 +105,10 @@ public class CompanyService
         }
     }
 
-    public boolean isCompanyExistent(String taxId)
+    public boolean isCompanyExistent(Company companyToLookFor)
     {
         Optional<Company> company = companyList.stream()
-                .filter(c -> c.getTaxId().equals(taxId))
+                .filter(c -> c.getTaxId().equals(companyToLookFor.getTaxId()))
                 .findAny();
 
         return company.isPresent();

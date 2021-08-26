@@ -8,18 +8,18 @@ public class Invoice
     private LocalDateTime dateIssued;
     private LocalDateTime dateDue;
     private int invoiceId;
-    private String companyTaxId;
+    private Company company;
     private List<InvoiceProduct> products;
 
     public Invoice()
     {
     }
 
-    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, String companyTaxId, List<InvoiceProduct> products)
+    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, Company company, List<InvoiceProduct> products)
     {
         this.dateIssued = dateIssued;
         this.dateDue = dateDue;
-        this.companyTaxId = companyTaxId;
+        this.company = company;
         this.products = products;
     }
 
@@ -53,14 +53,14 @@ public class Invoice
         this.invoiceId = invoiceId;
     }
 
-    public String getCompanyTaxId()
+    public Company getCompany()
     {
-        return companyTaxId;
+        return company;
     }
 
-    public void setCompanyTaxId(String companyTaxId)
+    public void setCompany(Company company)
     {
-        this.companyTaxId = companyTaxId;
+        this.company = company;
     }
 
     public List<InvoiceProduct> getProducts()
