@@ -3,19 +3,22 @@ package com.estafet.companies.service;
 import com.estafet.companies.configuration.ModelMapperConfiguration;
 import com.estafet.companies.configuration.ObjectMapperConfiguration;
 import com.estafet.companies.dto.CompanyDto;
+import com.estafet.companies.exception.EntityNotFoundException;
+import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.repository.CompanyRepository;
 import com.estafet.companies.utils.JSONParser;
 import com.estafet.companies.utils.ModelMapperUtils;
-import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Primary
 @Service
@@ -25,9 +28,15 @@ public class DbCompanyServiceImpl implements CompanyService
     private CompanyRepository repository;
 
     @Override
-    public Company getCompany(String taxId)
+    public Company getCompany(String taxId) throws EntityNotFoundException
     {
-        throw new NotYetImplementedException();
+        Optional<Company> company = repository.findById(taxId);
+        if (company.isEmpty())
+        {
+            throw new EntityNotFoundException("Company with taxId '" + taxId + "' not found!");
+        }
+
+        return company.get();
     }
 
     @Override
@@ -43,15 +52,32 @@ public class DbCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public void updateCompany(String taxId, Company newCompany)
+    public void updateCompany(String taxId, Company newCompany) throws InvalidInputException
     {
-        throw new NotYetImplementedException();
+        if (!taxId.equals(newCompany.getName()))
+        {
+            throw new InvalidInputException("You cannot change tax number of existing company!");
+        }
+
+        Optional<Company> oldCompany = repository.findById(taxId);
+        Company companyToUpdate;
+
+        // copy fields
+        companyToUpdate = oldCompany.orElse(newCompany);
+
+        repository.save(companyToUpdate);
     }
 
     @Override
-    public void deleteCompany(String taxId)
+    public void deleteCompany(String taxId) throws EntityNotFoundException
     {
-        throw new NotYetImplementedException();
+        try
+        {
+            repository.deleteById(taxId);
+        } catch (EmptyResultDataAccessException ex)
+        {
+            throw new EntityNotFoundException("Company with tax number '" + taxId + "' does not exist!");
+        }
     }
 
     @Override

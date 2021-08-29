@@ -1,6 +1,7 @@
 package com.estafet.companies.controller;
 
 import com.estafet.companies.dto.CompanyDto;
+import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,26 +40,27 @@ public class CompanyController
     }
 
     @GetMapping("/companies/{id}")
-    public CompanyDto getCompanyByName(@PathVariable("id") String taxId)
+    public CompanyDto getCompanyByName(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
     {
-        return modelMapperUtils.convertToDto(companyService.getCompany(taxId));
+        Company company = companyService.getCompany(taxId);
+        return modelMapperUtils.convertToDto(company);
     }
 
     @PutMapping("/companies")
-    public String addCompany(@RequestBody CompanyDto companyDto)
+    public String addCompany(@Valid @RequestBody CompanyDto companyDto) throws InvalidInputException
     {
         Company company = modelMapperUtils.convertToEntity(companyDto);
         return companyService.addCompany(company);
     }
 
     @PostMapping("/companies/{id}")
-    public void updateCompany(@PathVariable("id") String taxId, @RequestBody CompanyDto companyDto)
+    public void updateCompany(@PathVariable("id") String taxId, @Valid @RequestBody CompanyDto companyDto) throws InvalidInputException
     {
         companyService.updateCompany(taxId, modelMapperUtils.convertToEntity(companyDto));
     }
 
     @DeleteMapping("/companies/{id}")
-    public void deleteCompany(@PathVariable("id") String taxId)
+    public void deleteCompany(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
     {
         companyService.deleteCompany(taxId);
     }

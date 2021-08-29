@@ -65,6 +65,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- For controller dto validators -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.1.3.Final</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

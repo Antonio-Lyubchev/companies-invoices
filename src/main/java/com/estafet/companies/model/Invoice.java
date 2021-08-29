@@ -9,7 +9,6 @@ import java.util.List;
 public class Invoice
 {
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
@@ -21,7 +20,7 @@ public class Invoice
     @JoinColumn(name = "company_id")
     private Company company;
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<Product> products;
 
     public Invoice()
@@ -34,6 +33,25 @@ public class Invoice
         this.dateDue = dateDue;
         this.company = company;
         this.products = products;
+    }
+
+    public Invoice(Invoice other)
+    {
+        this.id = other.id;
+        this.dateIssued = other.dateIssued;
+        this.dateDue = other.dateDue;
+        this.company = other.company;
+        this.products = other.products;
+    }
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(Long id)
+    {
+        this.id = id;
     }
 
     public LocalDateTime getDateIssued()
@@ -54,16 +72,6 @@ public class Invoice
     public void setDateDue(LocalDateTime dateDue)
     {
         this.dateDue = dateDue;
-    }
-
-    public long getInvoiceId()
-    {
-        return id;
-    }
-
-    public void setInvoiceId(long id)
-    {
-        this.id = id;
     }
 
     public Company getCompany()

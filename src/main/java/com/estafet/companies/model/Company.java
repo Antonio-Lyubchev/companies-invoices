@@ -1,22 +1,23 @@
 package com.estafet.companies.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 
 @Entity
 public class Company
 {
     @Id
-    @NotNull
-    @Column(name = "taxId", nullable = false)
+    @Column(name = "taxId")
+    @NotEmpty
     private String taxNumber;
-    @NotNull
+    @NotEmpty
     private String name;
-    @NotNull
+    @NotEmpty
     private String address;
-    @NotNull
+    @NotEmpty
     private String representative;
 
     public Company()
@@ -29,6 +30,14 @@ public class Company
         this.name = name;
         this.address = address;
         this.representative = representative;
+    }
+
+    public Company(Company other)
+    {
+        this.taxNumber = other.taxNumber;
+        this.name = other.name;
+        this.address = other.address;
+        this.representative = other.representative;
     }
 
     public String getTaxNumber()

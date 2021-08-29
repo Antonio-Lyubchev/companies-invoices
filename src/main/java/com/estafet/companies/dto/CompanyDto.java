@@ -1,10 +1,17 @@
 package com.estafet.companies.dto;
 
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class CompanyDto
 {
+    @NotEmpty(message = "Company tax number is required")
     private String taxNumber;
+    @NotEmpty(message = "Company name is required")
     private String name;
+    @NotEmpty(message = "Company address is required")
     private String address;
+    @NotEmpty(message = "Company representative is required")
     private String representative;
 
     public CompanyDto()

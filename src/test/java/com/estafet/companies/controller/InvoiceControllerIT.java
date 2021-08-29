@@ -79,7 +79,7 @@ public class InvoiceControllerIT
                 .andExpect(jsonPath("$[*].dateDue", containsInAnyOrder(testInvoiceList.stream()
                         .map(Invoice::getDateDue)
                         .map(d -> d.format(DateTimeFormatter.ISO_DATE_TIME)).toArray())))
-                .andExpect(jsonPath("$[*].invoiceId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getInvoiceId).toArray())))
+                .andExpect(jsonPath("$[*].invoiceId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getId).toArray())))
                 .andExpect(jsonPath("$[*].companyTaxId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getCompany).toArray())));
 
         // Test entire response (including products)
@@ -95,9 +95,9 @@ public class InvoiceControllerIT
     void getInvoiceById() throws Exception
     {
         Invoice invoiceForTest = testInvoiceList.get(1);
-        when(invoiceService.getInvoice(invoiceForTest.getInvoiceId())).thenReturn(invoiceForTest);
+        when(invoiceService.getInvoice(invoiceForTest.getId())).thenReturn(invoiceForTest);
 
-        ResultActions result = mockMvc.perform(get("/invoices/" + invoiceForTest.getInvoiceId()));
+        ResultActions result = mockMvc.perform(get("/invoices/" + invoiceForTest.getId()));
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dateIssued", is(invoiceForTest.getDateIssued().format(DateTimeFormatter.ISO_DATE_TIME))))
@@ -115,7 +115,7 @@ public class InvoiceControllerIT
     @Test
     void addInvoice() throws InvalidInputException
     {
-        when(invoiceService.addInvoice(Mockito.any(Invoice.class))).thenReturn(testNewInvoice.getInvoiceId());
+        when(invoiceService.addInvoice(Mockito.any(Invoice.class))).thenReturn(testNewInvoice.getId());
 
         // TODO: needs company when preparing invoice
 /*        mockMvc.perform(put("/invoices")

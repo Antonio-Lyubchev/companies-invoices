@@ -1,22 +1,29 @@
 package com.estafet.companies.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class InvoiceProductDto
+public class ProductDto
 {
+    @NotEmpty(message = "Product name is required")
     private String name;
+    @NotNull(message = "Product price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Product price must be greater than {value}")
     private BigDecimal price;
-    private int productAmount;
+    @NotNull(message = "Product quantity is required")
+    @Min(value = 0, message = "Product amount must be greater than {value}")
+    private Long productAmount;
 
-    public InvoiceProductDto()
+    public ProductDto()
     {
     }
 
-    public InvoiceProductDto(String name, BigDecimal price, int productAmount)
+    public ProductDto(String name, BigDecimal price, Long productAmount)
     {
         this.name = name;
         this.price = price;
@@ -43,12 +50,12 @@ public class InvoiceProductDto
         this.price = price;
     }
 
-    public int getProductAmount()
+    public Long getProductAmount()
     {
         return productAmount;
     }
 
-    public void setProductAmount(int productAmount)
+    public void setProductAmount(Long productAmount)
     {
         this.productAmount = productAmount;
     }

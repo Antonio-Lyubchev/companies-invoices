@@ -24,7 +24,7 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public Company getCompany(String taxId)
+    public Company getCompany(String taxId) throws InvalidInputException, EntityNotFoundException
     {
         if (!StringUtils.hasText(taxId))
         {
@@ -38,7 +38,7 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public String addCompany(Company newCompany)
+    public String addCompany(Company newCompany) throws InvalidInputException
     {
         if (newCompany == null)
         {
@@ -59,8 +59,7 @@ public class InMemoryCompanyServiceImpl implements CompanyService
         return newCompany.getTaxNumber();
     }
 
-    @Override
-    public void addCompanies(List<Company> companies)
+    public void addCompanies(List<Company> companies) throws InvalidInputException
     {
         for (Company c : companies)
         {
@@ -69,7 +68,7 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public void updateCompany(String taxId, Company newCompany)
+    public void updateCompany(String taxId, Company newCompany) throws InvalidInputException
     {
         if (!StringUtils.hasText(taxId))
         {
@@ -96,7 +95,7 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public void deleteCompany(String taxId)
+    public void deleteCompany(String taxId) throws InvalidInputException, EntityNotFoundException
     {
         if (!StringUtils.hasText(taxId))
         {

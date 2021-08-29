@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
 @Service
@@ -19,7 +19,7 @@ public class InMemoryInvoiceServiceImpl implements InvoiceService
     private final InMemoryCompanyServiceImpl companyService;
     private final List<Invoice> invoiceList;
 
-    private final AtomicInteger invoiceCounter;
+    private final AtomicLong invoiceCounter;
 
     @Autowired
     public InMemoryInvoiceServiceImpl(InMemoryCompanyServiceImpl companyService)
@@ -27,20 +27,20 @@ public class InMemoryInvoiceServiceImpl implements InvoiceService
         this.companyService = companyService;
 
         invoiceList = new ArrayList<>();
-        invoiceCounter = new AtomicInteger();
+        invoiceCounter = new AtomicLong();
     }
 
     @Override
-    public Invoice getInvoice(long invoiceNumber)
+    public Invoice getInvoice(long invoiceNumber) throws EntityNotFoundException
     {
         return invoiceList.stream()
-                .filter(c -> c.getInvoiceId() == invoiceNumber)
+                .filter(c -> c.getId() == invoiceNumber)
                 .findAny()
                 .orElseThrow(() -> new EntityNotFoundException("Invoice '" + invoiceNumber + "' not found!"));
     }
 
     @Override
-    public long addInvoice(Invoice newInvoice)
+    public long addInvoice(Invoice newInvoice) throws InvalidInputException
     {
         if (newInvoice == null)
         {
@@ -52,14 +52,14 @@ public class InMemoryInvoiceServiceImpl implements InvoiceService
             throw new InvalidInputException("Company with tax number '" + newInvoice.getCompany().getTaxNumber() + "' was not found!");
         }
 
-        newInvoice.setInvoiceId(getNextUniqueIndex());
+        newInvoice.setId(getNextUniqueIndex());
         invoiceList.add(newInvoice);
 
-        return newInvoice.getInvoiceId();
+        return newInvoice.getId();
     }
 
     @Override
-    public void addInvoices(List<Invoice> invoices)
+    public void addInvoices(List<Invoice> invoices) throws InvalidInputException
     {
         for (Invoice invoice : invoices)
         {
@@ -68,7 +68,7 @@ public class InMemoryInvoiceServiceImpl implements InvoiceService
     }
 
     @Override
-    public void updateInvoice(long invoiceId, Invoice updatedInvoice)
+    public void updateInvoice(long invoiceId, Invoice updatedInvoice) throws InvalidInputException
     {
         if (updatedInvoice == null)
         {
@@ -76,7 +76,7 @@ public class InMemoryInvoiceServiceImpl implements InvoiceService
         }
 
         int indexToUpdate = IntStream.range(0, invoiceList.size())
-                .filter(i -> invoiceList.get(i).getInvoiceId() == invoiceId)
+                .filter(i -> invoiceList.get(i).getId() == invoiceId)
                 .findFirst()
                 .orElse(-1);
 
@@ -90,10 +90,10 @@ public class InMemoryInvoiceServiceImpl implements InvoiceService
     }
 
     @Override
-    public void deleteInvoice(long invoiceId)
+    public void deleteInvoice(long invoiceId) throws EntityNotFoundException
     {
         // if no elements got removed, throw so we can return 404
-        if (!invoiceList.removeIf(i -> i.getInvoiceId() == invoiceId))
+        if (!invoiceList.removeIf(i -> i.getId() == invoiceId))
         {
             throw new EntityNotFoundException("Tried to remove a non-existing invoice");
         }
@@ -105,7 +105,7 @@ public class InMemoryInvoiceServiceImpl implements InvoiceService
         return Collections.unmodifiableList(invoiceList);
     }
 
-    private int getNextUniqueIndex()
+    private long getNextUniqueIndex()
     {
         return invoiceCounter.getAndIncrement();
     }
