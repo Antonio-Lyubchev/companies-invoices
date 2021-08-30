@@ -1,4 +1,4 @@
-package com.estafet.companies.service;
+package com.estafet.companies.service.impl.db;
 
 import com.estafet.companies.configuration.ModelMapperConfiguration;
 import com.estafet.companies.configuration.ObjectMapperConfiguration;
@@ -7,6 +7,7 @@ import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.repository.CompanyRepository;
+import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.utils.JSONParser;
 import com.estafet.companies.utils.ModelMapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;

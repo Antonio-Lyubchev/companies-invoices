@@ -1,8 +1,9 @@
-package com.estafet.companies.service;
+package com.estafet.companies.service.impl.memory;
 
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Invoice;
+import com.estafet.companies.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
