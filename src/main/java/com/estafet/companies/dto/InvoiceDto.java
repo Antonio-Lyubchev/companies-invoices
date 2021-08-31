@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InvoiceDto
@@ -26,6 +27,7 @@ public class InvoiceDto
 
     public InvoiceDto()
     {
+        productsDto = new ArrayList<>();
     }
 
     public InvoiceDto(LocalDateTime dateIssued, LocalDateTime dateDue, CompanyDto companyDto, List<ProductDto> productsDto)
@@ -34,6 +36,11 @@ public class InvoiceDto
         this.dateDue = dateDue;
         this.companyDto = companyDto;
         this.productsDto = productsDto;
+    }
+
+    public void addProductItem(ProductDto product)
+    {
+        this.productsDto.add(product);
     }
 
     public Long getInvoiceId()

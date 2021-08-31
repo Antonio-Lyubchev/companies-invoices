@@ -2,75 +2,66 @@
   "dateIssued" : "25-08-2021 11:16:00",
   "dateDue" : "24-09-2021 11:16:00",
   "company": {
-	"name" : "company1",
-	"taxNumber" : "taxId1",
-	"address" : "addr1",
-	"representative" : "repr1"
+    "name" : "company1",
+    "taxNumber" : "123",
+    "address" : "addr1",
+    "representative" : "repr1"
   },
   "products" : [ {
     "name" : "product1",
     "price" : 3.14,
-    "productAmount" : 10,
-    "totalProductPrice" : 31.40
+    "productAmount" : 10
   }, {
     "name" : "product2",
     "price" : 15.32,
-    "productAmount" : 2,
-    "totalProductPrice" : 30.64
+    "productAmount" : 2
   }, {
     "name" : "product3",
     "price" : 150,
-    "productAmount" : 6,
-    "totalProductPrice" : 900.00
+    "productAmount" : 6
   } ]
 }, {
   "dateIssued" : "25-08-2021 11:16:00",
   "dateDue" : "24-09-2021 11:16:00",
   "company": {
-	"name" : "company2",
-	"taxNumber" : "taxId2",
-	"address" : "addr2",
-	"representative" : "repr2"
+    "name" : "company2",
+    "taxNumber" : "234",
+    "address" : "addr2",
+    "representative" : "repr2"
   },
   "products" : [ {
     "name" : "product1",
     "price" : 3.14,
-    "productAmount" : 10,
-    "totalProductPrice" : 31.40
+    "productAmount" : 10
   }, {
     "name" : "product2",
     "price" : 15.32,
-    "productAmount" : 2,
-    "totalProductPrice" : 30.64
+    "productAmount" : 2
   }, {
     "name" : "product3",
     "price" : 150,
-    "productAmount" : 6,
-    "totalProductPrice" : 900.00
+    "productAmount" : 6
   } ]
 }, {
   "dateIssued" : "25-08-2021 11:16:40",
   "dateDue" : "24-09-2021 11:16:40",
   "company": {
-	"name" : "company3",
-	"taxNumber" : "taxId3",
-	"address" : "addr3",
-	"representative" : "repr3"
+    "name" : "company3",
+    "taxNumber" : "456",
+    "address" : "addr3",
+    "representative" : "repr3"
   },
   "products" : [ {
     "name" : "product1",
     "price" : 3.14,
-    "productAmount" : 10,
-    "totalProductPrice" : 31.40
+    "productAmount" : 10
   }, {
     "name" : "product2",
     "price" : 15.32,
-    "productAmount" : 2,
-    "totalProductPrice" : 30.64
+    "productAmount" : 2
   }, {
     "name" : "product3",
     "price" : 150,
-    "productAmount" : 6,
-    "totalProductPrice" : 900.00
+    "productAmount" : 6
   } ]
 } ]

@@ -5,14 +5,16 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @Entity
 public class Company
 {
     @Id
+    @NotNull
     @Column(name = "taxId")
-    @NotEmpty
-    private String taxNumber;
+    private long taxNumber;
     @NotEmpty
     private String name;
     @NotEmpty
@@ -24,7 +26,7 @@ public class Company
     {
     }
 
-    public Company(String taxNumber, String name, String address, String representative)
+    public Company(long taxNumber, String name, String address, String representative)
     {
         this.taxNumber = taxNumber;
         this.name = name;
@@ -40,12 +42,12 @@ public class Company
         this.representative = other.representative;
     }
 
-    public String getTaxNumber()
+    public Long getTaxNumber()
     {
         return taxNumber;
     }
 
-    public void setTaxNumber(String taxNumber)
+    public void setTaxNumber(long taxNumber)
     {
         this.taxNumber = taxNumber;
     }
@@ -78,5 +80,20 @@ public class Company
     public void setRepresentative(String representative)
     {
         this.representative = representative;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Company company = (Company) o;
+        return taxNumber == company.taxNumber && name.equals(company.name) && address.equals(company.address) && representative.equals(company.representative);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(taxNumber, name, address, representative);
     }
 }

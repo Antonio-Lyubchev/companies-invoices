@@ -17,13 +17,13 @@ public class ProductDto
     private BigDecimal price;
     @NotNull(message = "Product quantity is required")
     @Min(value = 0, message = "Product amount must be greater than {value}")
-    private Long productAmount;
+    private double productAmount;
 
     public ProductDto()
     {
     }
 
-    public ProductDto(String name, BigDecimal price, Long productAmount)
+    public ProductDto(String name, BigDecimal price, double productAmount)
     {
         this.name = name;
         this.price = price;
@@ -50,12 +50,12 @@ public class ProductDto
         this.price = price;
     }
 
-    public Long getProductAmount()
+    public double getProductAmount()
     {
         return productAmount;
     }
 
-    public void setProductAmount(Long productAmount)
+    public void setProductAmount(double productAmount)
     {
         this.productAmount = productAmount;
     }

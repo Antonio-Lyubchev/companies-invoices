@@ -3,13 +3,17 @@ package com.estafet.companies.utils;
 import com.estafet.companies.configuration.ModelMapperConfiguration;
 import com.estafet.companies.dto.CompanyDto;
 import com.estafet.companies.dto.InvoiceDto;
+import com.estafet.companies.dto.ProductDto;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.model.Invoice;
+import com.estafet.companies.model.Product;
+import com.estafet.companies.model.ProductItem;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,22 +35,50 @@ public class ModelMapperUtils
 
     public CompanyDto convertToDto(Company company)
     {
-        return modelMapper.map(company, CompanyDto.class);
+        return new CompanyDto(company.getTaxNumber(), company.getName(), company.getAddress(), company.getRepresentative());
+    }
+
+    public ProductDto convertToDto(ProductItem productItem)
+    {
+        return new ProductDto(productItem.getProduct().getName(), productItem.getProduct().getPrice(), productItem.getAmount());
+    }
+
+    public ProductItem convertToEntity(ProductDto productDto)
+    {
+        Product product = new Product(productDto.getName(), productDto.getPrice());
+        ProductItem productItem = new ProductItem();
+        productItem.setAmount(productDto.getProductAmount());
+        productItem.setProduct(product);
+        return productItem;
     }
 
     public Company convertToEntity(CompanyDto companyDto)
     {
-        return modelMapper.map(companyDto, Company.class);
+        return new Company(companyDto.getTaxNumber(), companyDto.getName(), companyDto.getAddress(), companyDto.getRepresentative());
     }
 
     public InvoiceDto convertToDto(Invoice invoice)
     {
-        return modelMapper.map(invoice, InvoiceDto.class);
+        InvoiceDto invDto = new InvoiceDto();
+        invDto.setCompanyDto(convertToDto(invoice.getCompany()));
+        invoice.getProductItems().forEach(item -> invDto.addProductItem(convertToDto(item)));
+        invDto.setInvoiceId(invoice.getId());
+        invDto.setDateIssued(invoice.getDateIssued());
+        invDto.setDateDue(invoice.getDateDue());
+        return invDto;
     }
 
     public Invoice convertToEntity(InvoiceDto invoiceDto)
     {
-        return modelMapper.map(invoiceDto, Invoice.class);
+        Invoice invoice = new Invoice();
+        invoice.setCompany(convertToEntity(invoiceDto.getCompanyDto()));
+        invoice.setDateDue(invoiceDto.getDateDue());
+        invoice.setDateIssued(invoiceDto.getDateIssued());
+        List<ProductItem> products = new ArrayList<>();
+
+        invoice.setProductItems(products);
+
+        return invoice;
     }
 
     /**

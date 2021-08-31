@@ -51,7 +51,7 @@ public class CompanyControllerIT
         byte[] companiesByteArray = companiesJsonFileResource.getInputStream().readAllBytes();
         testCompanyList = parser.fromJsonToList(companiesByteArray, Company.class);
 
-        testNewCompany = new Company("company4", "taxId4", "addr4", "repr4");
+        testNewCompany = new Company(4145234, "company4", "addr4", "repr4");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CompanyControllerIT
                         .content(parser.fromObjectToJsonString(testNewCompany)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString(testNewCompany.getTaxNumber())));
+                .andExpect(content().string(containsString(Long.toString(testNewCompany.getTaxNumber()))));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class CompanyControllerIT
     @Test
     void deleteCompany() throws Exception
     {
-        final String fakeTaxId = "taxId9999";
+        final long fakeTaxId = 9999;
         doThrow(new EntityNotFoundException()).when(service).deleteCompany(fakeTaxId);
 
         mockMvc.perform(delete("/companies/" + fakeTaxId))

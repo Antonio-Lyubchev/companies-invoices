@@ -1,16 +1,16 @@
 [ {
   "name" : "company1",
-  "taxNumber" : "taxId1",
+  "taxNumber" : "123",
   "address" : "addr1",
   "representative" : "repr1"
 }, {
   "name" : "company2",
-  "taxNumber" : "taxId2",
+  "taxNumber" : "234",
   "address" : "addr2",
   "representative" : "repr2"
 }, {
   "name" : "company3",
-  "taxNumber" : "taxId3",
+  "taxNumber" : "456",
   "address" : "addr3",
   "representative" : "repr3"
 } ]

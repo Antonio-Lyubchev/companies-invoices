@@ -62,7 +62,7 @@ public class InvoiceControllerIT
         parser.setObjectMapper(new ObjectMapperConfiguration().objectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
         testInvoiceList = parser.fromJsonToList(invoicesByteArray, Invoice.class);
 
-        testNewInvoice = new Invoice(testInvoiceList.get(0).getDateIssued(), testInvoiceList.get(0).getDateDue(), testInvoiceList.get(0).getCompany(), testInvoiceList.get(0).getProducts());
+        testNewInvoice = new Invoice(testInvoiceList.get(0).getDateIssued(), testInvoiceList.get(0).getDateDue(), testInvoiceList.get(0).getCompany(), testInvoiceList.get(0).getProductItems());
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.estafet.companies.utils.JSONParser;
 import com.estafet.companies.utils.ModelMapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,27 +43,42 @@ public class CompanyController
     @GetMapping("/companies/{id}")
     public CompanyDto getCompanyByName(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
     {
-        Company company = companyService.getCompany(taxId);
+        if (!StringUtils.hasText(taxId))
+        {
+            throw new InvalidInputException("Company tax ID is invalid!");
+        }
+
+        Company company = companyService.getCompany(Long.parseLong(taxId));
         return modelMapperUtils.convertToDto(company);
     }
 
     @PutMapping("/companies")
-    public String addCompany(@Valid @RequestBody CompanyDto companyDto) throws InvalidInputException
+    public CompanyDto addCompany(@Valid @RequestBody CompanyDto companyDto) throws InvalidInputException, EntityNotFoundException
     {
         Company company = modelMapperUtils.convertToEntity(companyDto);
-        return companyService.addCompany(company);
+        long companyId = companyService.addCompany(company);
+        return modelMapperUtils.convertToDto(companyService.getCompany(companyId));
     }
 
     @PostMapping("/companies/{id}")
     public void updateCompany(@PathVariable("id") String taxId, @Valid @RequestBody CompanyDto companyDto) throws InvalidInputException
     {
-        companyService.updateCompany(taxId, modelMapperUtils.convertToEntity(companyDto));
+        if (!StringUtils.hasText(taxId))
+        {
+            throw new InvalidInputException("Company tax ID is invalid!");
+        }
+
+        companyService.updateCompany(Long.parseLong(taxId), modelMapperUtils.convertToEntity(companyDto));
     }
 
     @DeleteMapping("/companies/{id}")
     public void deleteCompany(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
     {
-        companyService.deleteCompany(taxId);
+        if (!StringUtils.hasText(taxId))
+        {
+            throw new InvalidInputException("Company tax ID is invalid!");
+        }
+        companyService.deleteCompany(Long.parseLong(taxId));
     }
 
     @PostMapping(path = "/companies", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -53,7 +53,6 @@ public class InvoiceController
     @PutMapping("/invoices")
     public long addInvoice(@Valid @RequestBody InvoiceDto invoiceDto) throws InvalidInputException
     {
-        //TODO: call controller?
         Invoice invoice = modelMapperUtils.convertToEntity(invoiceDto);
         registerCustomer(invoiceDto);
         return invoiceService.addInvoice(invoice);
@@ -79,7 +78,7 @@ public class InvoiceController
         invoiceService.addInvoices(invoiceList);
     }
 
-    private String registerCustomer(InvoiceDto invoiceDto) throws InvalidInputException
+    private long registerCustomer(InvoiceDto invoiceDto) throws InvalidInputException
     {
         Company companyToRegister = modelMapperUtils.convertToEntity(invoiceDto.getCompanyDto());
         return companyService.addCompany(companyToRegister);

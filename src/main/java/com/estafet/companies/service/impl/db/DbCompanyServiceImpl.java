@@ -29,7 +29,7 @@ public class DbCompanyServiceImpl implements CompanyService
     private CompanyRepository repository;
 
     @Override
-    public Company getCompany(String taxId) throws EntityNotFoundException
+    public Company getCompany(long taxId) throws EntityNotFoundException
     {
         Optional<Company> company = repository.findById(taxId);
         if (company.isEmpty())
@@ -41,9 +41,10 @@ public class DbCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public String addCompany(Company newCompany)
+    public long addCompany(Company newCompany)
     {
-        return repository.save(newCompany).getTaxNumber();
+        repository.save(newCompany);
+        return newCompany.getTaxNumber();
     }
 
     @Override
@@ -53,24 +54,20 @@ public class DbCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public void updateCompany(String taxId, Company newCompany) throws InvalidInputException
+    public void updateCompany(long taxId, Company newCompany) throws InvalidInputException
     {
-        if (!taxId.equals(newCompany.getName()))
+        if (taxId != newCompany.getTaxNumber())
         {
             throw new InvalidInputException("You cannot change tax number of existing company!");
         }
 
-        Optional<Company> oldCompany = repository.findById(taxId);
-        Company companyToUpdate;
+        Company oldCompany = repository.findByTaxNumber(taxId);
 
-        // copy fields
-        companyToUpdate = oldCompany.orElse(newCompany);
-
-        repository.save(companyToUpdate);
+        repository.save(newCompany);
     }
 
     @Override
-    public void deleteCompany(String taxId) throws EntityNotFoundException
+    public void deleteCompany(long taxId) throws EntityNotFoundException
     {
         try
         {

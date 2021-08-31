@@ -15,13 +15,13 @@ public class ModelMapperConfiguration
         m.typeMap(Invoice.class, InvoiceDto.class).addMappings(mapper ->
         {
             mapper.map(Invoice::getCompany, InvoiceDto::setCompanyDto);
-            mapper.map(Invoice::getProducts, InvoiceDto::setProductsDto);
+            mapper.map(Invoice::getProductItems, InvoiceDto::setProductsDto);
         });
 
         m.typeMap(InvoiceDto.class, Invoice.class).addMappings(mapper ->
         {
             mapper.map(InvoiceDto::getCompanyDto, Invoice::setCompany);
-            mapper.map(InvoiceDto::getProductsDto, Invoice::setProducts);
+            mapper.map(InvoiceDto::getProductsDto, Invoice::setProductItems);
         });
 
         return m;

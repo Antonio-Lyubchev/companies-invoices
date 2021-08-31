@@ -13,7 +13,7 @@ public class CompanyDtoTest
     @Test
     public void whenConvertCompanyEntityToCompanyDto_thenCorrect()
     {
-        Company company = new Company("company4", "taxId4", "addr4", "repr4");
+        Company company = new Company(242421L, "taxId4", "addr4", "repr4");
 
         CompanyDto companyDto = modelMapper.map(company, CompanyDto.class);
 
@@ -26,7 +26,7 @@ public class CompanyDtoTest
     @Test
     public void whenConvertCompanyDtoToCompanyEntity_thenCorrect()
     {
-        CompanyDto companyDto = new CompanyDto("company4", "taxId4", "addr4", "repr4");
+        CompanyDto companyDto = new CompanyDto(324234L, "taxId4", "addr4", "wrwe");
 
         Company company = modelMapper.map(companyDto, Company.class);
 

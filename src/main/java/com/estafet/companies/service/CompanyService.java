@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface CompanyService
 {
-    Company getCompany(String taxId) throws InvalidInputException, EntityNotFoundException;
+    Company getCompany(long taxId) throws InvalidInputException, EntityNotFoundException;
 
-    String addCompany(Company newCompany) throws InvalidInputException;
+    long addCompany(Company newCompany) throws InvalidInputException;
 
-    void updateCompany(String taxId, Company newCompany) throws InvalidInputException;
+    void updateCompany(long taxId, Company newCompany) throws InvalidInputException;
 
     void addCompanies(List<Company> companies) throws InvalidInputException;
 
-    void deleteCompany(String taxId) throws InvalidInputException, EntityNotFoundException;
+    void deleteCompany(long taxId) throws InvalidInputException, EntityNotFoundException;
 
     List<Company> getAllCompanies();
 }

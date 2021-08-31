@@ -5,7 +5,6 @@ import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,12 +24,8 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public Company getCompany(String taxId) throws InvalidInputException, EntityNotFoundException
+    public Company getCompany(long taxId) throws InvalidInputException, EntityNotFoundException
     {
-        if (!StringUtils.hasText(taxId))
-        {
-            throw new InvalidInputException("Company tax ID is invalid!");
-        }
 
         return companyList.stream()
                 .filter(c -> c.getTaxNumber().equals(taxId))
@@ -39,7 +34,7 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public String addCompany(Company newCompany) throws InvalidInputException
+    public long addCompany(Company newCompany) throws InvalidInputException
     {
         if (newCompany == null)
         {
@@ -69,13 +64,8 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public void updateCompany(String taxId, Company newCompany) throws InvalidInputException
+    public void updateCompany(long taxId, Company newCompany) throws InvalidInputException
     {
-        if (!StringUtils.hasText(taxId))
-        {
-            throw new InvalidInputException("Company tax ID is invalid!");
-        }
-
         if (newCompany == null)
         {
             throw new InvalidInputException("Company is invalid!");
@@ -96,13 +86,8 @@ public class InMemoryCompanyServiceImpl implements CompanyService
     }
 
     @Override
-    public void deleteCompany(String taxId) throws InvalidInputException, EntityNotFoundException
+    public void deleteCompany(long taxId) throws EntityNotFoundException
     {
-        if (!StringUtils.hasText(taxId))
-        {
-            throw new InvalidInputException("Company tax ID is invalid!");
-        }
-
         // if no elements got removed, throw so we can return 404
         if (!companyList.removeIf(c -> c.getTaxNumber().equals(taxId)))
         {

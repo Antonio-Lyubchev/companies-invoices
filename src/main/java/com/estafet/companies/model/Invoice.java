@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Invoice
@@ -20,19 +21,19 @@ public class Invoice
     @JoinColumn(name = "company_id")
     private Company company;
     @NotNull
-    @OneToMany(cascade = CascadeType.PERSIST)
-    private List<Product> products;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductItem> productItems;
 
     public Invoice()
     {
     }
 
-    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, Company company, List<Product> products)
+    public Invoice(LocalDateTime dateIssued, LocalDateTime dateDue, Company company, List<ProductItem> productItems)
     {
         this.dateIssued = dateIssued;
         this.dateDue = dateDue;
         this.company = company;
-        this.products = products;
+        this.productItems = productItems;
     }
 
     public Invoice(Invoice other)
@@ -41,7 +42,7 @@ public class Invoice
         this.dateIssued = other.dateIssued;
         this.dateDue = other.dateDue;
         this.company = other.company;
-        this.products = other.products;
+        this.productItems = other.productItems;
     }
 
     public Long getId()
@@ -84,13 +85,28 @@ public class Invoice
         this.company = company;
     }
 
-    public List<Product> getProducts()
+    public List<ProductItem> getProductItems()
     {
-        return products;
+        return productItems;
     }
 
-    public void setProducts(List<Product> products)
+    public void setProductItems(List<ProductItem> productItems)
     {
-        this.products = products;
+        this.productItems = productItems;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Invoice invoice = (Invoice) o;
+        return id.equals(invoice.id) && dateIssued.equals(invoice.dateIssued) && dateDue.equals(invoice.dateDue) && company.equals(invoice.company) && productItems.equals(invoice.productItems);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(id, dateIssued, dateDue, company, productItems);
     }
 }

@@ -5,15 +5,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * This class represents a single invoice product, including the product quantity.
  */
-// TODO: 3 part composite key? We will fill up the database if we keep inserting products that are the same for every new invoice
 @Entity
 public class Product
 {
@@ -25,19 +24,15 @@ public class Product
     @NotNull
     @DecimalMin(value = "0.0", inclusive = false, message = "Product price must be greater than {value}")
     private BigDecimal price;
-    @NotNull
-    @Min(value = 0, message = "Product amount must be greater than {value}")
-    private Long productAmount;
 
     public Product()
     {
     }
 
-    public Product(String name, BigDecimal price, Long amount)
+    public Product(String name, BigDecimal price)
     {
         this.name = name;
         this.price = price;
-        this.productAmount = amount;
     }
 
     public String getName()
@@ -60,13 +55,18 @@ public class Product
         this.price = price;
     }
 
-    public Long getProductAmount()
+    @Override
+    public boolean equals(Object o)
     {
-        return productAmount;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return id.equals(product.id) && name.equals(product.name) && price.equals(product.price);
     }
 
-    public void setProductAmount(Long productAmount)
+    @Override
+    public int hashCode()
     {
-        this.productAmount = productAmount;
+        return Objects.hash(id, name, price);
     }
 }

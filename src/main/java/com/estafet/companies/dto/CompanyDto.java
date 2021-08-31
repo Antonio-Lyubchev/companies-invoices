@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class CompanyDto
 {
     @NotEmpty(message = "Company tax number is required")
-    private String taxNumber;
+    private Long taxNumber;
     @NotEmpty(message = "Company name is required")
     private String name;
     @NotEmpty(message = "Company address is required")
@@ -18,7 +18,7 @@ public class CompanyDto
     {
     }
 
-    public CompanyDto(String taxNumber, String name, String address, String representative)
+    public CompanyDto(Long taxNumber, String name, String address, String representative)
     {
         this.taxNumber = taxNumber;
         this.name = name;
@@ -26,12 +26,12 @@ public class CompanyDto
         this.representative = representative;
     }
 
-    public String getTaxNumber()
+    public Long getTaxNumber()
     {
         return taxNumber;
     }
 
-    public void setTaxNumber(String taxNumber)
+    public void setTaxNumber(Long taxNumber)
     {
         this.taxNumber = taxNumber;
     }
