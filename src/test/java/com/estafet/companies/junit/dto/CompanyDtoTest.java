@@ -1,5 +1,6 @@
-package com.estafet.companies.dto;
+package com.estafet.companies.junit.dto;
 
+import com.estafet.companies.dto.CompanyDto;
 import com.estafet.companies.model.Company;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;

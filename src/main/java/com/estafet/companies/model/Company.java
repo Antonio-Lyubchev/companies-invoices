@@ -14,7 +14,7 @@ public class Company
     @Id
     @NotNull
     @Column(name = "taxId")
-    private long taxNumber;
+    private Long taxNumber;
     @NotEmpty
     private String name;
     @NotEmpty
@@ -26,7 +26,7 @@ public class Company
     {
     }
 
-    public Company(long taxNumber, String name, String address, String representative)
+    public Company(Long taxNumber, String name, String address, String representative)
     {
         this.taxNumber = taxNumber;
         this.name = name;
@@ -88,7 +88,7 @@ public class Company
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Company company = (Company) o;
-        return taxNumber == company.taxNumber && name.equals(company.name) && address.equals(company.address) && representative.equals(company.representative);
+        return taxNumber.equals(company.taxNumber) && name.equals(company.name) && address.equals(company.address) && representative.equals(company.representative);
     }
 
     @Override

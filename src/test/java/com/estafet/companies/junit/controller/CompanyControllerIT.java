@@ -1,5 +1,6 @@
-package com.estafet.companies.controller;
+package com.estafet.companies.junit.controller;
 
+import com.estafet.companies.controller.CompanyController;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.model.Company;
 import com.estafet.companies.service.CompanyService;
@@ -51,7 +52,7 @@ public class CompanyControllerIT
         byte[] companiesByteArray = companiesJsonFileResource.getInputStream().readAllBytes();
         testCompanyList = parser.fromJsonToList(companiesByteArray, Company.class);
 
-        testNewCompany = new Company(4145234, "company4", "addr4", "repr4");
+        testNewCompany = new Company(4145234L, "company4", "addr4", "repr4");
     }
 
     @Test

@@ -1,6 +1,7 @@
-package com.estafet.companies.controller;
+package com.estafet.companies.junit.controller;
 
 import com.estafet.companies.configuration.ObjectMapperConfiguration;
+import com.estafet.companies.controller.InvoiceController;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.service.CompanyService;
