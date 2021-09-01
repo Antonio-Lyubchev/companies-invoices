@@ -3,9 +3,11 @@ package com.estafet.companies.dto;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
+
 public class CompanyDto
 {
-    @NotEmpty(message = "Company tax number is required")
+    @NotNull(message = "Company tax number is required")
     private Long taxNumber;
     @NotEmpty(message = "Company name is required")
     private String name;
