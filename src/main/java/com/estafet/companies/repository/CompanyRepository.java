@@ -10,6 +10,4 @@ import java.util.List;
 public interface CompanyRepository extends JpaRepository<Company, Long>
 {
     List<Company> findByName(String name);
-
-    Company findByTaxNumber(long taxId);
 }

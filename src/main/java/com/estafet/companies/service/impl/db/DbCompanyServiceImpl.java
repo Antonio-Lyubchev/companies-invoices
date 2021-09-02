@@ -58,10 +58,8 @@ public class DbCompanyServiceImpl implements CompanyService
     {
         if (taxId != newCompany.getTaxNumber())
         {
-            throw new InvalidInputException("You cannot change tax number of existing company!");
+            throw new InvalidInputException("You cannot change the tax number of an existing company!");
         }
-
-        Company oldCompany = repository.findByTaxNumber(taxId);
 
         repository.save(newCompany);
     }

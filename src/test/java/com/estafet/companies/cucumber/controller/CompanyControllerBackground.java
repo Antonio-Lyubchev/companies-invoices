@@ -1,0 +1,67 @@
+package com.estafet.companies.cucumber.controller;
+
+import com.estafet.companies.model.Company;
+import com.estafet.companies.repository.CompanyRepository;
+import com.estafet.companies.utils.JSONParser;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
+import java.util.List;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CompanyControllerBackground
+{
+    @Autowired
+    protected CompanyRepository companyRepository;
+
+    @Autowired
+    protected JSONParser parser;
+
+    @Value("${springdoc.api-docs.path}")
+    private String apiDocsUrl;
+
+    private List<Company> testCompanyList;
+
+    @Given("the webservice is running")
+    public void theWebserviceIsRunning()
+    {
+        given().log().all().get("/" + apiDocsUrl).then().statusCode(is(not(404)));
+    }
+
+    @And("the storage contains companies")
+    public void theStorageContainsCompanies() throws IOException
+    {
+        Resource companiesJsonFileResource = new ClassPathResource("JSON/AddCompanies.json");
+        byte[] companiesByteArray = companiesJsonFileResource.getInputStream().readAllBytes();
+        testCompanyList = parser.fromJsonToList(companiesByteArray, Company.class);
+
+        companyRepository.saveAll(testCompanyList);
+
+        assertEquals(testCompanyList.size(), companyRepository.count(), "Failed populating companies in DB");
+    }
+
+    @When("I request information about a company")
+    public void iRequestInformationAboutACompany()
+    {
+        Company companyToExtract = testCompanyList.get(0);
+        Company extractedCompany = companyRepository.findById(companyToExtract.getTaxNumber()).orElse(null);
+        assertEquals(companyToExtract, extractedCompany, "Failed confirming existence of specified company");
+    }
+
+    @Then("I should receive the information from the service")
+    public void iShouldReceiveTheInformationFromTheService()
+    {
+        // we checked in When()
+    }
+}
