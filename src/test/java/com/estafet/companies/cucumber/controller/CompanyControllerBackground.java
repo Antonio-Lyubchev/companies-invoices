@@ -19,6 +19,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CompanyControllerBackground
 {
@@ -32,6 +33,8 @@ public class CompanyControllerBackground
     private String apiDocsUrl;
 
     private List<Company> testCompanyList;
+    private Company companyToExtract;
+    private Company extractedCompany;
 
     @Given("the webservice is running")
     public void theWebserviceIsRunning()
@@ -54,14 +57,14 @@ public class CompanyControllerBackground
     @When("I request information about a company")
     public void iRequestInformationAboutACompany()
     {
-        Company companyToExtract = testCompanyList.get(0);
-        Company extractedCompany = companyRepository.findById(companyToExtract.getTaxNumber()).orElse(null);
-        assertEquals(companyToExtract, extractedCompany, "Failed confirming existence of specified company");
+        companyToExtract = testCompanyList.get(0);
+        extractedCompany = companyRepository.findById(companyToExtract.getTaxNumber()).orElse(null);
     }
 
-    @Then("I should receive the information from the service")
+    @Then("I expect the information to be present in the storage")
     public void iShouldReceiveTheInformationFromTheService()
     {
-        // we checked in When()
+        assertNotNull(extractedCompany, "Failed retrieving company from storage");
+        assertEquals(companyToExtract, extractedCompany, "Failed confirming existence of specified company");
     }
 }

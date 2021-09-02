@@ -7,7 +7,7 @@ Feature: Store and retrieve company data from service
     Given the webservice is running
     And the storage contains companies
     When I request information about a company
-    Then I should receive the information from the service
+    Then I expect the information to be present in the storage
 
   Scenario: Retrieve company data from the web service
     Given the webservice storage contains company with tax id 123
