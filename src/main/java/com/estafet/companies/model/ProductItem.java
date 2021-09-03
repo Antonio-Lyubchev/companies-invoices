@@ -16,7 +16,6 @@ public class ProductItem
     private Product product;
     private double amount;
 
-
     public long getId()
     {
         return id;

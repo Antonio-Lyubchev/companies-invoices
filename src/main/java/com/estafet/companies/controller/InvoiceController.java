@@ -1,5 +1,6 @@
 package com.estafet.companies.controller;
 
+import com.estafet.companies.dto.CompanyDto;
 import com.estafet.companies.dto.InvoiceDto;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
@@ -11,6 +12,7 @@ import com.estafet.companies.utils.JSONParser;
 import com.estafet.companies.utils.ModelMapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,21 +38,21 @@ public class InvoiceController
         this.modelMapperUtils = modelMapperUtils;
     }
 
-    @GetMapping("/invoices")
+    @GetMapping(value = "/invoices", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<InvoiceDto> getAllInvoices()
     {
         List<Invoice> invoiceList = invoiceService.getAllInvoicesAsList();
         return invoiceList.stream().map(modelMapperUtils::convertToDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/invoices/{id}")
+    @GetMapping(value = "/invoices/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public InvoiceDto getInvoiceById(@PathVariable("id") long invoiceId) throws EntityNotFoundException
     {
         Invoice invoice = invoiceService.getInvoice(invoiceId);
         return modelMapperUtils.convertToDto(invoice);
     }
 
-    @PutMapping("/invoices")
+    @PutMapping(value = "/invoices", produces = MediaType.APPLICATION_JSON_VALUE)
     public long addInvoice(@Valid @RequestBody InvoiceDto invoiceDto) throws InvalidInputException
     {
         Invoice invoice = modelMapperUtils.convertToEntity(invoiceDto);
@@ -58,13 +60,13 @@ public class InvoiceController
         return invoiceService.addInvoice(invoice);
     }
 
-    @PostMapping("/invoices/{id}")
+    @PostMapping(value = "/invoices/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void updateInvoice(@PathVariable("id") long invoiceId, @Valid @RequestBody InvoiceDto invoiceDto) throws InvalidInputException
     {
         invoiceService.updateInvoice(invoiceId, modelMapperUtils.convertToEntity(invoiceDto));
     }
 
-    @DeleteMapping("/invoices/{id}")
+    @DeleteMapping(value = "/invoices/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteInvoice(@PathVariable("id") long invoiceId) throws EntityNotFoundException
     {
         invoiceService.deleteInvoice(invoiceId);
@@ -78,9 +80,34 @@ public class InvoiceController
         invoiceService.addInvoices(invoiceList);
     }
 
-    private long registerCustomer(InvoiceDto invoiceDto) throws InvalidInputException
+    private void registerCustomer(InvoiceDto invoiceDto) throws InvalidInputException
     {
+        CompanyDto companyDto = invoiceDto.getCompanyDto();
+        if (isFullyQualifiedCompanyDto(companyDto))
+        {
+            Company companyToRegister = modelMapperUtils.convertToEntity(invoiceDto.getCompanyDto());
+            companyService.addCompany(companyToRegister);
+            return;
+        }
+
         Company companyToRegister = modelMapperUtils.convertToEntity(invoiceDto.getCompanyDto());
-        return companyService.addCompany(companyToRegister);
+
+        try
+        {
+            // ignore result, we just want to know if this company is present in storage
+            companyService.getCompany(companyToRegister.getTaxNumber());
+        } catch (EntityNotFoundException e)
+        {
+            throw new InvalidInputException("Cannot generate an invoice for a company that does not exist");
+        }
+    }
+
+    private boolean isFullyQualifiedCompanyDto(CompanyDto companyDto)
+    {
+        return companyDto != null
+                && companyDto.getTaxNumber() != null
+                && StringUtils.hasText(companyDto.getName())
+                && StringUtils.hasText(companyDto.getAddress())
+                && StringUtils.hasText(companyDto.getRepresentative());
     }
 }

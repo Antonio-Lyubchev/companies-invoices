@@ -1,5 +1,7 @@
 package com.estafet.companies.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -20,7 +22,7 @@ public class Invoice
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "company_id")
     private Company company;
-    @NotNull
+    @NotEmpty
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductItem> productItems;
 

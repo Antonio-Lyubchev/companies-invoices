@@ -1,6 +1,7 @@
 package com.estafet.companies.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -16,13 +17,13 @@ public class InvoiceDto
     private LocalDateTime dateIssued;
     @NotNull(message = "Invoice due date is required")
     private LocalDateTime dateDue;
-    @Valid
     @JsonProperty("company")
     @NotNull(message = "Company is required")
+    // We don't annotate with @Valid since when deserializing, an invoice could have only company id with it, not a full company object
     private CompanyDto companyDto;
     @Valid
     @JsonProperty("products")
-    @NotNull(message = "Product list is required")
+    @NotEmpty(message = "Product list is required")
     private List<ProductDto> productsDto;
 
     public InvoiceDto()

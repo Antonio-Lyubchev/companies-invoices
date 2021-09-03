@@ -74,8 +74,9 @@ public class ModelMapperUtils
         invoice.setCompany(convertToEntity(invoiceDto.getCompanyDto()));
         invoice.setDateDue(invoiceDto.getDateDue());
         invoice.setDateIssued(invoiceDto.getDateIssued());
-        List<ProductItem> products = new ArrayList<>();
 
+        List<ProductItem> products = new ArrayList<>();
+        invoiceDto.getProductsDto().forEach(productDto -> products.add(convertToEntity(productDto)));
         invoice.setProductItems(products);
 
         return invoice;

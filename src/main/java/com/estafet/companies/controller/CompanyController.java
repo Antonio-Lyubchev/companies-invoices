@@ -33,15 +33,15 @@ public class CompanyController
         this.modelMapperUtils = modelMapperUtils;
     }
 
-    @GetMapping("/companies")
+    @GetMapping(value = "/companies", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CompanyDto> getAllCompanies()
     {
         List<Company> companiesList = companyService.getAllCompanies();
         return companiesList.stream().map(modelMapperUtils::convertToDto).collect(Collectors.toList());
     }
 
-    @GetMapping("/companies/{id}")
-    public CompanyDto getCompanyByName(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
+    @GetMapping(value = "/companies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompanyDto getCompany(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
     {
         if (!StringUtils.hasText(taxId))
         {
@@ -52,7 +52,7 @@ public class CompanyController
         return modelMapperUtils.convertToDto(company);
     }
 
-    @PutMapping("/companies")
+    @PutMapping(value = "/companies", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDto addCompany(@Valid @RequestBody CompanyDto companyDto) throws InvalidInputException, EntityNotFoundException
     {
         Company company = modelMapperUtils.convertToEntity(companyDto);
@@ -60,7 +60,7 @@ public class CompanyController
         return modelMapperUtils.convertToDto(companyService.getCompany(companyId));
     }
 
-    @PostMapping("/companies/{id}")
+    @PostMapping(value = "/companies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void updateCompany(@PathVariable("id") String taxId, @Valid @RequestBody CompanyDto companyDto) throws InvalidInputException
     {
         if (!StringUtils.hasText(taxId))
@@ -71,7 +71,7 @@ public class CompanyController
         companyService.updateCompany(Long.parseLong(taxId), modelMapperUtils.convertToEntity(companyDto));
     }
 
-    @DeleteMapping("/companies/{id}")
+    @DeleteMapping(value = "/companies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void deleteCompany(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
     {
         if (!StringUtils.hasText(taxId))
@@ -90,5 +90,4 @@ public class CompanyController
 
         companyService.addCompanies(invoiceList);
     }
-
 }
