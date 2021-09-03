@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class InvoiceController
@@ -42,7 +41,7 @@ public class InvoiceController
     public List<InvoiceDto> getAllInvoices()
     {
         List<Invoice> invoiceList = invoiceService.getAllInvoicesAsList();
-        return invoiceList.stream().map(modelMapperUtils::convertToDto).collect(Collectors.toList());
+        return modelMapperUtils.convertInvoiceListToDto(invoiceList);
     }
 
     @GetMapping(value = "/invoices/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +75,7 @@ public class InvoiceController
     public void addInvoice(@RequestPart MultipartFile file) throws IOException, InvalidInputException
     {
         List<InvoiceDto> invoiceDtoList = parser.fromJsonToList(file.getBytes(), InvoiceDto.class);
-        List<Invoice> invoiceList = modelMapperUtils.mapList(invoiceDtoList, Invoice.class);
+        List<Invoice> invoiceList = modelMapperUtils.convertInvoiceDtoListToEntity(invoiceDtoList);
         invoiceService.addInvoices(invoiceList);
     }
 

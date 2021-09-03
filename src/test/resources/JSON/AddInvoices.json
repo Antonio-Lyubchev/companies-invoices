@@ -2,10 +2,10 @@
   "dateIssued" : "25-08-2021 11:16:00",
   "dateDue" : "24-09-2021 11:16:00",
   "company": {
-	"name" : "company1",
+    "name" : "company1",
     "taxNumber" : "123",
-	"address" : "addr1",
-	"representative" : "repr1"
+    "address" : "addr1",
+    "representative" : "repr1"
   },
   "products" : [ {
     "name" : "product1",
@@ -24,10 +24,10 @@
   "dateIssued" : "25-08-2021 11:16:00",
   "dateDue" : "24-09-2021 11:16:00",
   "company": {
-	"name" : "company2",
+    "name" : "company2",
     "taxNumber" : "234",
-	"address" : "addr2",
-	"representative" : "repr2"
+    "address" : "addr2",
+    "representative" : "repr2"
   },
   "products" : [ {
     "name" : "product1",
@@ -46,10 +46,10 @@
   "dateIssued" : "25-08-2021 11:16:40",
   "dateDue" : "24-09-2021 11:16:40",
   "company": {
-	"name" : "company3",
+    "name" : "company3",
     "taxNumber" : "456",
-	"address" : "addr3",
-	"representative" : "repr3"
+    "address" : "addr3",
+    "representative" : "repr3"
   },
   "products" : [ {
     "name" : "product1",

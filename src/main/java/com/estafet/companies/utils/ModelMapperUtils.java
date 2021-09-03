@@ -24,14 +24,25 @@ public class ModelMapperUtils
     @Autowired
     private ModelMapper modelMapper;
 
-    public <S, T> List<T> mapList(List<S> source, Class<T> targetClass)
+    public List<InvoiceDto> convertInvoiceListToDto(List<Invoice> invoiceList)
     {
-        return source
-                .stream()
-                .map(element -> modelMapper.map(element, targetClass))
-                .collect(Collectors.toList());
+        return invoiceList.stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    public List<Invoice> convertInvoiceDtoListToEntity(List<InvoiceDto> invoiceDtoList)
+    {
+        return invoiceDtoList.stream().map(this::convertToEntity).collect(Collectors.toList());
+    }
+
+    public List<CompanyDto> convertCompanyListToDto(List<Company> companyList)
+    {
+        return companyList.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    public List<Company> convertCompanyDtoListToEntity(List<CompanyDto> companyDtoList)
+    {
+        return companyDtoList.stream().map(this::convertToEntity).collect(Collectors.toList());
+    }
 
     public CompanyDto convertToDto(Company company)
     {

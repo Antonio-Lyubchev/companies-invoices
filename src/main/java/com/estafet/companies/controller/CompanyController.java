@@ -86,7 +86,7 @@ public class CompanyController
     {
         List<CompanyDto> companiesDto = parser.fromJsonToList(file.getBytes(), CompanyDto.class);
 
-        List<Company> invoiceList = modelMapperUtils.mapList(companiesDto, Company.class);
+        List<Company> invoiceList = modelMapperUtils.convertCompanyDtoListToEntity(companiesDto);
 
         companyService.addCompanies(invoiceList);
     }

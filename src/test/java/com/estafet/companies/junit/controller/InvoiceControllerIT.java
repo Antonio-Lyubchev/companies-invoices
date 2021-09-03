@@ -1,14 +1,16 @@
 package com.estafet.companies.junit.controller;
 
+import com.estafet.companies.configuration.ModelMapperConfiguration;
 import com.estafet.companies.configuration.ObjectMapperConfiguration;
 import com.estafet.companies.controller.InvoiceController;
+import com.estafet.companies.dto.InvoiceDto;
 import com.estafet.companies.exception.InvalidInputException;
+import com.estafet.companies.model.Company;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.service.CompanyService;
 import com.estafet.companies.service.InvoiceService;
 import com.estafet.companies.utils.JSONParser;
 import com.estafet.companies.utils.ModelMapperUtils;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -28,7 +30,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -45,10 +46,13 @@ public class InvoiceControllerIT
     private JSONParser parser;
 
     @MockBean
-    private InvoiceService invoiceService;
+    private ModelMapperUtils mockedModelMapperUtils;
     @MockBean
-    private CompanyService companyService;
+    private InvoiceService mockedInvoiceService;
+    @MockBean
+    private CompanyService mockedCompanyService;
 
+    private ModelMapperUtils testModelMapper;
     private List<Invoice> testInvoiceList;
     private Invoice testNewInvoice;
 
@@ -60,18 +64,34 @@ public class InvoiceControllerIT
 
         // New parser before context initializes the one for the class
         JSONParser parser = new JSONParser();
-        parser.setObjectMapper(new ObjectMapperConfiguration().objectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
-        testInvoiceList = parser.fromJsonToList(invoicesByteArray, Invoice.class);
+        parser.setObjectMapper(new ObjectMapperConfiguration().objectMapper());
 
-        testNewInvoice = new Invoice(testInvoiceList.get(0).getDateIssued(), testInvoiceList.get(0).getDateDue(), testInvoiceList.get(0).getCompany(), testInvoiceList.get(0).getProductItems());
+        testModelMapper = new ModelMapperUtils();
+        testModelMapper.setModelMapper(new ModelMapperConfiguration().modelMapper());
+
+        List<InvoiceDto> invoiceDtoList = parser.fromJsonToList(invoicesByteArray, InvoiceDto.class);
+        testInvoiceList = testModelMapper.convertInvoiceDtoListToEntity(invoiceDtoList);
+        // fill IDs to mock correctly
+        for (int i = 0; i < testInvoiceList.size(); i++)
+        {
+            testInvoiceList.get(i).setId((long)i);
+            for (int j = 0; j < testInvoiceList.get(i).getProductItems().size(); j++)
+            {
+                testInvoiceList.get(i).getProductItems().get(j).setId(j);
+                testInvoiceList.get(i).getProductItems().get(j).getProduct().setId((long)j);
+            }
+        }
+
+        testNewInvoice = new Invoice(testInvoiceList.get(0));
     }
 
     @Test
     void getAllInvoices() throws Exception
     {
-        when(invoiceService.getAllInvoicesAsList()).thenReturn(testInvoiceList);
+        when(mockedInvoiceService.getAllInvoicesAsList()).thenReturn(testInvoiceList);
+        when(mockedModelMapperUtils.convertInvoiceListToDto(Mockito.anyList())).thenReturn(testModelMapper.convertInvoiceListToDto(testInvoiceList));
 
-        ResultActions result = mockMvc.perform(get("/invoices"))
+        mockMvc.perform(get("/invoices"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].dateIssued", containsInAnyOrder(testInvoiceList.stream()
@@ -80,23 +100,21 @@ public class InvoiceControllerIT
                 .andExpect(jsonPath("$[*].dateDue", containsInAnyOrder(testInvoiceList.stream()
                         .map(Invoice::getDateDue)
                         .map(d -> d.format(DateTimeFormatter.ISO_DATE_TIME)).toArray())))
-                .andExpect(jsonPath("$[*].invoiceId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getId).toArray())))
-                .andExpect(jsonPath("$[*].companyTaxId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getCompany).toArray())));
-
-        // Test entire response (including products)
-        assertEquals(result.andReturn().getResponse().getContentAsString(), parser.fromObjectListToJsonString(testInvoiceList));
-
-        mockMvc.perform(get("/invoices"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(parser.fromObjectListToJsonString(testInvoiceList)));
+                .andExpect(jsonPath("$[*].invoiceId", containsInAnyOrder(testInvoiceList.stream().map(Invoice::getId).map(Long::intValue).toArray())))
+                .andExpect(jsonPath("$[*].company.taxNumber", containsInAnyOrder(testInvoiceList
+                        .stream()
+                        .map(Invoice::getCompany)
+                        .map(Company::getTaxNumber)
+                        .map(Long::intValue)
+                        .toArray())));
     }
 
     @Test
     void getInvoiceById() throws Exception
     {
         Invoice invoiceForTest = testInvoiceList.get(1);
-        when(invoiceService.getInvoice(invoiceForTest.getId())).thenReturn(invoiceForTest);
+        when(mockedInvoiceService.getInvoice(invoiceForTest.getId())).thenReturn(invoiceForTest);
+        when(mockedModelMapperUtils.convertToDto(Mockito.any(Invoice.class))).thenReturn(testModelMapper.convertToDto(invoiceForTest));
 
         ResultActions result = mockMvc.perform(get("/invoices/" + invoiceForTest.getId()));
         result.andDo(print())
@@ -104,19 +122,15 @@ public class InvoiceControllerIT
                 .andExpect(jsonPath("$.dateIssued", is(invoiceForTest.getDateIssued().format(DateTimeFormatter.ISO_DATE_TIME))))
                 .andExpect(jsonPath("$.dateDue", is(invoiceForTest.getDateDue().format(DateTimeFormatter.ISO_DATE_TIME))))
                 .andExpect(jsonPath("$.company.name", is(invoiceForTest.getCompany().getName())))
-                .andExpect(jsonPath("$.company.taxId", is(invoiceForTest.getCompany().getTaxNumber())))
+                .andExpect(jsonPath("$.company.taxNumber", is(invoiceForTest.getCompany().getTaxNumber().intValue())))
                 .andExpect(jsonPath("$.company.address", is(invoiceForTest.getCompany().getAddress())))
                 .andExpect(jsonPath("$.company.representative", is(invoiceForTest.getCompany().getRepresentative())));
-
-        // Test entire response (including products)
-        //TODO: test is innacurate because of the DTOs, needs reimplementing
-        //assertEquals(result.andReturn().getResponse().getContentAsString(), parser.fromObjectToJsonString(invoiceForTest));
     }
 
     @Test
     void addInvoice() throws InvalidInputException
     {
-        when(invoiceService.addInvoice(Mockito.any(Invoice.class))).thenReturn(testNewInvoice.getId());
+        when(mockedInvoiceService.addInvoice(Mockito.any(Invoice.class))).thenReturn(testNewInvoice.getId());
 
         // TODO: needs company when preparing invoice
 /*        mockMvc.perform(put("/invoices")

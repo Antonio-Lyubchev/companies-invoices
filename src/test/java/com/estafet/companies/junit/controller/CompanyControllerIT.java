@@ -64,7 +64,7 @@ public class CompanyControllerIT
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*].name", containsInAnyOrder(testCompanyList.stream().map(Company::getName).toArray())))
-                .andExpect(jsonPath("$[*].taxId", containsInAnyOrder(testCompanyList.stream().map(Company::getTaxNumber).toArray())))
+                .andExpect(jsonPath("$[*].taxNumber", containsInAnyOrder(testCompanyList.stream().map(Company::getTaxNumber).map(Long::intValue).toArray())))
                 .andExpect(jsonPath("$[*].address", containsInAnyOrder(testCompanyList.stream().map(Company::getAddress).toArray())));
 
         mockMvc.perform(get("/companies"))
@@ -83,7 +83,7 @@ public class CompanyControllerIT
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(companyForTest.getName())))
-                .andExpect(jsonPath("$.taxId", is(companyForTest.getTaxNumber())))
+                .andExpect(jsonPath("$.taxNumber", is(companyForTest.getTaxNumber().intValue())))
                 .andExpect(jsonPath("$.address", is(companyForTest.getAddress())));
     }
 
@@ -91,6 +91,7 @@ public class CompanyControllerIT
     public void addCompany() throws Exception
     {
         when(service.addCompany(Mockito.any(Company.class))).thenReturn(testNewCompany.getTaxNumber());
+        when(service.getCompany(testNewCompany.getTaxNumber())).thenReturn(testNewCompany);
 
         mockMvc.perform(put("/companies")
                         .contentType(MediaType.APPLICATION_JSON)
