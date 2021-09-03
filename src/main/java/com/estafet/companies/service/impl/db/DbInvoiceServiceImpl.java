@@ -1,23 +1,15 @@
 package com.estafet.companies.service.impl.db;
 
-import com.estafet.companies.configuration.ModelMapperConfiguration;
-import com.estafet.companies.configuration.ObjectMapperConfiguration;
-import com.estafet.companies.dto.InvoiceDto;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.repository.InvoiceRepository;
 import com.estafet.companies.service.InvoiceService;
-import com.estafet.companies.utils.JSONParser;
-import com.estafet.companies.utils.ModelMapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,23 +82,5 @@ public class DbInvoiceServiceImpl implements InvoiceService
     public List<Invoice> getAllInvoicesAsList()
     {
         return repository.findAll();
-    }
-
-    @PostConstruct
-    public void insertTestData() throws IOException
-    {
-        ClassPathResource invoicesJson = new ClassPathResource("/JSON/AddInvoices.json");
-        byte[] invoicesByteArray = invoicesJson.getInputStream().readAllBytes();
-
-        JSONParser parser = new JSONParser();
-        parser.setObjectMapper(new ObjectMapperConfiguration().objectMapper());
-        List<InvoiceDto> invoiceDtos = parser.fromJsonToList(invoicesByteArray, InvoiceDto.class);
-
-        ModelMapperUtils modelMapperUtils = new ModelMapperUtils();
-        modelMapperUtils.setModelMapper(new ModelMapperConfiguration().modelMapper());
-
-        List<Invoice> invoiceList = modelMapperUtils.mapList(invoiceDtos, Invoice.class);
-
-        repository.saveAll(invoiceList);
     }
 }

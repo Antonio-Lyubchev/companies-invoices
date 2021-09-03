@@ -15,12 +15,15 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.util.List;
 
-import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.get;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * Executed before every Scenario in the .feature file
+ */
 public class CompanyControllerBackground
 {
     @Autowired
@@ -39,9 +42,14 @@ public class CompanyControllerBackground
     @Given("the webservice is running")
     public void theWebserviceIsRunning()
     {
-        given().log().all().get("/" + apiDocsUrl).then().statusCode(is(not(404)));
+        get("/" + apiDocsUrl).then().statusCode(is(not(404)));
     }
 
+    /**
+     * The company list is refreshed before every scenario
+     *
+     * @throws IOException if the 'AddCompanies.json' file is missing
+     */
     @And("the storage contains companies")
     public void theStorageContainsCompanies() throws IOException
     {
@@ -49,6 +57,7 @@ public class CompanyControllerBackground
         byte[] companiesByteArray = companiesJsonFileResource.getInputStream().readAllBytes();
         testCompanyList = parser.fromJsonToList(companiesByteArray, Company.class);
 
+        companyRepository.deleteAll();
         companyRepository.saveAll(testCompanyList);
 
         assertEquals(testCompanyList.size(), companyRepository.count(), "Failed populating companies in DB");
