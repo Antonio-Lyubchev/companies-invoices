@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Executed before every Scenario in the .feature file
  */
-public class CompanyControllerBackground
+public class CompanyScenarioRequirements
 {
     @Autowired
     protected CompanyRepository companyRepository;

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * For every scenario in the .feature file, the class is reinstantiated (fields don't need to be reset)
  */
-public class CompanyControllerIT
+public class CompanyScenarios
 {
     @Autowired
     private CompanyRepository companyRepository;

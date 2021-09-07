@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(ModelMapperUtils.class)
 @WebMvcTest(CompanyController.class)
-public class CompanyControllerIT
+public class CompanyScenarios
 {
     @Autowired
     private MockMvc mockMvc;
