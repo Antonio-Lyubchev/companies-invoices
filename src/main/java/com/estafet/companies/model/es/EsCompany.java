@@ -5,6 +5,9 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.util.Objects;
 
+/**
+ * Company model for elastic search persistence
+ */
 @Document(indexName = "companyindex")
 public class EsCompany
 {

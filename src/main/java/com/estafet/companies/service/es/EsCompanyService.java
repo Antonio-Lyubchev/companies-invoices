@@ -6,6 +6,9 @@ import com.estafet.companies.model.es.EsCompany;
 
 import java.util.List;
 
+/**
+ * Company service for elastic search persistence
+ */
 public interface EsCompanyService
 {
     EsCompany getCompany(long taxId) throws InvalidInputException, EntityNotFoundException;

@@ -17,6 +17,9 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * REST controller for elastic search operations
+ */
 @RestController
 @RequestMapping("/es")
 public class EsCompanyController
