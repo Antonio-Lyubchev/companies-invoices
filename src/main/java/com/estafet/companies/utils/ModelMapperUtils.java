@@ -8,6 +8,7 @@ import com.estafet.companies.model.Company;
 import com.estafet.companies.model.Invoice;
 import com.estafet.companies.model.Product;
 import com.estafet.companies.model.ProductItem;
+import com.estafet.companies.model.es.EsCompany;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Component
 @Import(ModelMapperConfiguration.class)
@@ -91,6 +93,42 @@ public class ModelMapperUtils
         invoice.setProductItems(products);
 
         return invoice;
+    }
+
+    /**
+     * @param companyEs ElasticSearch document
+     * @return Company DTO
+     */
+    public CompanyDto convertToDto(EsCompany companyEs)
+    {
+        return new CompanyDto(companyEs.getTaxNumber(), companyEs.getName(), companyEs.getAddress(), companyEs.getRepresentative());
+    }
+
+    /**
+     * @param companyDto
+     * @return ElasticSearch document
+     */
+    public EsCompany convertToEsEntity(CompanyDto companyDto)
+    {
+        return new EsCompany(companyDto.getTaxNumber(), companyDto.getName(), companyDto.getAddress(), companyDto.getRepresentative());
+    }
+
+    /**
+     * @param esCompanyIterable List of elastic search company models
+     * @return List of Company DTOs
+     */
+    public List<CompanyDto> convertCompanyListToDto(Iterable<EsCompany> esCompanyIterable)
+    {
+        return StreamSupport.stream(esCompanyIterable.spliterator(), false).map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    /**
+     * @param companyDtoList
+     * @return List of ElasticSearch documents
+     */
+    public List<EsCompany> convertEsCompanyDtoListToEntity(List<CompanyDto> companyDtoList)
+    {
+        return companyDtoList.stream().map(this::convertToEsEntity).collect(Collectors.toList());
     }
 
     /**

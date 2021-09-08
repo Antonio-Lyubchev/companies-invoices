@@ -1,10 +1,10 @@
-package com.estafet.companies.controller;
+package com.estafet.companies.controller.es;
 
 import com.estafet.companies.dto.CompanyDto;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
-import com.estafet.companies.model.Company;
-import com.estafet.companies.service.CompanyService;
+import com.estafet.companies.model.es.EsCompany;
+import com.estafet.companies.service.es.EsCompanyService;
 import com.estafet.companies.utils.JSONParser;
 import com.estafet.companies.utils.ModelMapperUtils;
 import com.estafet.companies.utils.Utils;
@@ -16,17 +16,17 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-public class CompanyController
+@RequestMapping("/es")
+public class EsCompanyController
 {
-    private final CompanyService companyService;
+    private final EsCompanyService companyService;
     private final JSONParser parser;
     private final ModelMapperUtils modelMapperUtils;
 
     @Autowired
-    CompanyController(CompanyService companyService, JSONParser parser, ModelMapperUtils modelMapperUtils)
+    EsCompanyController(EsCompanyService companyService, JSONParser parser, ModelMapperUtils modelMapperUtils)
     {
         this.companyService = companyService;
         this.parser = parser;
@@ -36,29 +36,27 @@ public class CompanyController
     @GetMapping(value = "/companies", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CompanyDto> getAllCompanies()
     {
-        List<Company> companiesList = companyService.getAllCompanies();
-        return companiesList.stream().map(modelMapperUtils::convertToDto).collect(Collectors.toList());
+        return modelMapperUtils.convertCompanyListToDto(companyService.getAllCompanies());
     }
 
     @GetMapping(value = "/companies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompanyDto getCompany(@PathVariable("id") String taxId) throws InvalidInputException, EntityNotFoundException
     {
-        Company company = companyService.getCompany(Utils.parseAndValidate(taxId));
-        return modelMapperUtils.convertToDto(company);
+        return modelMapperUtils.convertToDto(companyService.getCompany(Utils.parseAndValidate(taxId)));
     }
 
     @PutMapping(value = "/companies", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompanyDto addCompany(@Valid @RequestBody CompanyDto companyDto) throws InvalidInputException, EntityNotFoundException
+    public CompanyDto addCompany(@Valid @RequestBody CompanyDto companyDto) throws InvalidInputException
     {
-        Company company = modelMapperUtils.convertToEntity(companyDto);
-        long companyId = companyService.addCompany(company);
-        return modelMapperUtils.convertToDto(companyService.getCompany(companyId));
+        companyService.addCompany(modelMapperUtils.convertToEsEntity(companyDto));
+
+        return companyDto;
     }
 
     @PostMapping(value = "/companies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public void updateCompany(@PathVariable("id") String taxId, @Valid @RequestBody CompanyDto companyDto) throws InvalidInputException
     {
-        companyService.updateCompany(Utils.parseAndValidate(taxId), modelMapperUtils.convertToEntity(companyDto));
+        companyService.updateCompany(Utils.parseAndValidate(taxId), modelMapperUtils.convertToEsEntity(companyDto));
     }
 
     @DeleteMapping(value = "/companies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,7 +70,7 @@ public class CompanyController
     {
         List<CompanyDto> companiesDto = parser.fromJsonToList(file.getBytes(), CompanyDto.class);
 
-        List<Company> companyList = modelMapperUtils.convertCompanyDtoListToEntity(companiesDto);
+        List<EsCompany> companyList = modelMapperUtils.convertEsCompanyDtoListToEntity(companiesDto);
 
         companyService.addCompanies(companyList);
     }

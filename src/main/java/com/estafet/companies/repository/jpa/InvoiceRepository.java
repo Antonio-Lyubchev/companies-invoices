@@ -1,4 +1,4 @@
-package com.estafet.companies.repository;
+package com.estafet.companies.repository.jpa;
 
 import com.estafet.companies.model.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -3,7 +3,7 @@ package com.estafet.companies.service.impl.db;
 import com.estafet.companies.exception.EntityNotFoundException;
 import com.estafet.companies.exception.InvalidInputException;
 import com.estafet.companies.model.Company;
-import com.estafet.companies.repository.CompanyRepository;
+import com.estafet.companies.repository.jpa.CompanyRepository;
 import com.estafet.companies.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;

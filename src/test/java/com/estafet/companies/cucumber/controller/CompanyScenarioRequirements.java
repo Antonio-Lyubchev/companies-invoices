@@ -1,7 +1,7 @@
 package com.estafet.companies.cucumber.controller;
 
 import com.estafet.companies.model.Company;
-import com.estafet.companies.repository.CompanyRepository;
+import com.estafet.companies.repository.jpa.CompanyRepository;
 import com.estafet.companies.utils.JSONParser;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
